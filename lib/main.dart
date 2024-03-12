@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:touchdown/constants/routes.dart';
 import 'package:touchdown/pages/home_page.dart';
 import 'package:touchdown/pages/login_page.dart';
+import 'package:touchdown/pages/onboarding_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,13 +25,15 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: "Touchdown",
-        theme: ThemeData(primarySwatch: Colors.deepPurple),
+        theme: ThemeData(primarySwatch: Colors.blue),
         initialRoute:
-            supabase.auth.currentUser == null ? "/login" : "/homepage",
+            supabase.auth.currentUser == null ? routes.login : routes.home,
         routes: {
-          '/login': (context) => const LoginPage(),
-          '/homepage': (context) => const HomePage()
+          routes.login: (context) => const LoginPage(),
+          routes.home: (context) => const HomePage(),
+          routes.onboarding: (context) => const OnboardingPage()
         });
   }
 }

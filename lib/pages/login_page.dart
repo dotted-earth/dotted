@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:touchdown/constants/routes.dart';
 import 'package:touchdown/main.dart';
-import 'package:touchdown/ui/ApplicationToolbar.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,9 +17,28 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    supabase.auth.onAuthStateChange.listen((data) {
+    supabase.auth.onAuthStateChange.listen((data) async {
       if (data.event == AuthChangeEvent.signedIn) {
-        Navigator.pushNamedAndRemoveUntil(context, "/homepage", (_) => false);
+        if (data.session?.refreshToken != null) {
+          supabase.auth.setSession(data.session!.refreshToken!);
+
+          try {
+            var userProfile = await supabase
+                .from("profiles")
+                .select('*')
+                .eq("id", data.session!.user.id)
+                .single();
+            if (userProfile['has_onboarded'] == false) {
+              await Navigator.pushNamedAndRemoveUntil(
+                  context, routes.onboarding, (_) => false);
+            } else {
+              await Navigator.pushNamedAndRemoveUntil(
+                  context, routes.home, (_) => false);
+            }
+          } catch (err) {
+            print(err);
+          }
+        }
       }
     });
   }
@@ -27,11 +46,15 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const ApplicationToolbar(),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const Text(
+              "Touchdown",
+              style: TextStyle(fontSize: 48),
+            ),
+            Image.asset("assets/traveler.png"),
             const SizedBox(
               height: 12,
             ),
@@ -69,11 +92,15 @@ class _LoginPageState extends State<LoginPage> {
                     throw 'No ID Token found.';
                   }
 
-                  await supabase.auth.signInWithIdToken(
-                    provider: OAuthProvider.google,
-                    idToken: idToken,
-                    accessToken: accessToken,
-                  );
+                  try {
+                    await supabase.auth.signInWithIdToken(
+                      provider: OAuthProvider.google,
+                      idToken: idToken,
+                      accessToken: accessToken,
+                    );
+                  } catch (err) {
+                    print(err);
+                  }
                 }
 
                 setState(() {
