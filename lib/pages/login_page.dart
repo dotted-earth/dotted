@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:touchdown/constants/routes.dart';
-import 'package:touchdown/main.dart';
+import 'package:touchdown/constants/supabase.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
