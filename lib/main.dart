@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:touchdown/pages/home_page.dart';
+import 'package:touchdown/pages/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,80 +22,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: HomePage());
-  }
-}
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  String? _userId;
-
-  @override
-  void initState() {
-    super.initState();
-    supabase.auth.onAuthStateChange.listen((data) {
-      setState(() {
-        _userId = data.session?.user.id;
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(_userId ?? 'Not signed in'),
-            SizedBox(
-              height: 12,
-            ),
-            ElevatedButton(
-                onPressed: () async {
-                  /// Web Client ID that you registered with Google Cloud.
-                  const webClientId =
-                      '351644549750-u10n35gkg77igip6n4dk7r44vcba2s6q.apps.googleusercontent.com';
-
-                  /// iOS Client ID that you registered with Google Cloud.
-                  const iosClientId =
-                      '351644549750-h1t54of515hibhp53q9f5iheurcjhpao.apps.googleusercontent.com';
-
-                  // Google sign in on Android will work without providing the Android
-                  // Client ID registered on Google Cloud.
-
-                  final GoogleSignIn googleSignIn = GoogleSignIn(
-                    clientId: iosClientId,
-                    serverClientId: webClientId,
-                  );
-                  final googleUser = await googleSignIn.signIn();
-                  final googleAuth = await googleUser!.authentication;
-                  final accessToken = googleAuth.accessToken;
-                  final idToken = googleAuth.idToken;
-
-                  if (accessToken == null) {
-                    throw 'No Access Token found.';
-                  }
-                  if (idToken == null) {
-                    throw 'No ID Token found.';
-                  }
-
-                  await supabase.auth.signInWithIdToken(
-                    provider: OAuthProvider.google,
-                    idToken: idToken,
-                    accessToken: accessToken,
-                  );
-                },
-                child: const Text("Sign-in with Google"))
-          ],
-        ),
-      ),
-    );
+    return MaterialApp(
+        title: "Touchdown",
+        theme: ThemeData(primarySwatch: Colors.deepPurple),
+        initialRoute:
+            supabase.auth.currentUser == null ? "/login" : "/homepage",
+        routes: {
+          '/login': (context) => const LoginPage(),
+          '/homepage': (context) => const HomePage()
+        });
   }
 }
