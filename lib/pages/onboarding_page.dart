@@ -12,8 +12,7 @@ class OnboardingPage extends StatelessWidget {
     try {
       await supabase
           .from("profiles")
-          .update(
-              {"has_onboarded": false}) // change to TRUE when done with feature
+          .update({"has_onboarded": true})
           .eq("id", supabase.auth.currentUser!.id)
           .then((_) async => {
                 await Navigator.pushNamedAndRemoveUntil(
@@ -161,19 +160,70 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
             }))
         .toList();
 
-    print(selectedRecreations);
+    final selectedDiets = _preferences["diets"]!
+        .isSelected
+        .mapIndexed((index, element) =>
+            element ? _preferences["diets"]!.data[index] : null)
+        .whereNotNull()
+        .map((item) => ({
+              'user_id': userId,
+              'diet_id': item["id"],
+            }))
+        .toList();
 
-    // TODO - fix this when supabase fix their client
-    // await supabase
-    //     .from("user_recreations")
-    //     .upsert(
-    //       selectedRecreations,
-    //       ignoreDuplicates: true,
-    //     );
+    final selectedCuisines = _preferences["cuisines"]!
+        .isSelected
+        .mapIndexed((index, element) =>
+            element ? _preferences["cuisines"]!.data[index] : null)
+        .whereNotNull()
+        .map((item) => ({
+              'user_id': userId,
+              'cuisine_id': item["id"],
+            }))
+        .toList();
 
-    setState(() {
-      _isLoading = false;
-    });
+    final selectedFoodAllergies = _preferences["foodAllergies"]!
+        .isSelected
+        .mapIndexed((index, element) =>
+            element ? _preferences["foodAllergies"]!.data[index] : null)
+        .whereNotNull()
+        .map((item) => ({
+              'user_id': userId,
+              'food_allergy_id': item["id"],
+            }))
+        .toList();
+
+    try {
+      var futures = List.of([
+        supabase.from("user_recreations").upsert(
+              selectedRecreations,
+              ignoreDuplicates: true,
+            ),
+        supabase.from("user_diets").upsert(
+              selectedDiets,
+              ignoreDuplicates: true,
+            ),
+        supabase.from("user_cuisines").upsert(
+              selectedCuisines,
+              ignoreDuplicates: true,
+            ),
+        supabase.from("user_food_allergies").upsert(
+              selectedFoodAllergies,
+              ignoreDuplicates: true,
+            )
+      ]);
+
+      await Future.wait(futures).then((data) => {
+            setState(() {
+              _isLoading = false;
+            })
+          });
+    } catch (err) {
+      print(err);
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   _onFinish() async {
