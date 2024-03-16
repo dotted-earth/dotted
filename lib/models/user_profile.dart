@@ -1,5 +1,3 @@
-export "user_model.dart";
-
 class UserProfile {
   String id;
   String? updatedAt;

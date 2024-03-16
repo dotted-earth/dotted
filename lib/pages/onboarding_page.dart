@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:touchdown/constants/routes.dart';
 import 'package:touchdown/constants/supabase.dart';
+import 'package:collection/collection.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({Key? key}) : super(key: key);
@@ -27,37 +30,39 @@ class OnboardingPage extends StatelessWidget {
           onFinish: () {
             finishOnboarding(context);
           },
-          onSkip: () {
-            finishOnboarding(context);
-          },
           pages: [
             OnboardingPageModel(
-              title: 'Fast, Fluid and Secure',
+              title: 'Welcome to Touchdown!',
               description:
-                  'Enjoy the best of the world in the palm of your hands.',
+                  "Before we can begin, we have to get your travel preferences in order to serve you",
               imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',
-              bgColor: Colors.indigo,
             ),
             OnboardingPageModel(
-              title: 'Connect with your friends.',
-              description: 'Connect with your friends anytime anywhere.',
+              title: 'Recreations',
+              description: 'What kind of activities do you like?',
+              imageUrl: 'https://cdn-icons-png.freepik.com/512/962/962431.png',
+              dataKey: 'recreations',
+            ),
+            OnboardingPageModel(
+              title: 'Diets',
+              description: 'What is your general diet?',
               imageUrl:
-                  'https://i.ibb.co/LvmZypG/storefront-illustration-2.png',
-              bgColor: const Color(0xff1eb090),
+                  'https://cdn-icons-png.freepik.com/512/3775/3775187.png',
+              dataKey: "diets",
             ),
             OnboardingPageModel(
-              title: 'Bookmark your favourites',
-              description:
-                  'Bookmark your favourite quotes to read at a leisure time.',
-              imageUrl: 'https://i.ibb.co/420D7VP/building.png',
-              bgColor: const Color(0xfffeae4f),
+              title: 'Cuisines',
+              description: 'What kind of foods do you like?',
+              imageUrl:
+                  'https://cdn-icons-png.freepik.com/512/11040/11040884.png',
+              dataKey: "cuisines",
             ),
             OnboardingPageModel(
-              title: 'Follow creators',
-              description:
-                  'Follow your favourite creators to stay in the loop.',
-              imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',
-              bgColor: Colors.purple,
+              title: 'Food Allergies',
+              description: 'Do you have any food allergies?',
+              imageUrl:
+                  'https://cdn-icons-png.freepik.com/512/5282/5282049.png',
+              dataKey: "foodAllergies",
             ),
           ]),
     );
@@ -66,15 +71,13 @@ class OnboardingPage extends StatelessWidget {
 
 class OnboardingPagePresenter extends StatefulWidget {
   final List<OnboardingPageModel> pages;
-  final VoidCallback onSkip;
   final VoidCallback onFinish;
 
-  const OnboardingPagePresenter(
-      {Key? key,
-      required this.pages,
-      required this.onSkip,
-      required this.onFinish})
-      : super(key: key);
+  const OnboardingPagePresenter({
+    super.key,
+    required this.pages,
+    required this.onFinish,
+  });
 
   @override
   State<OnboardingPagePresenter> createState() => _OnboardingPageState();
@@ -83,11 +86,162 @@ class OnboardingPagePresenter extends StatefulWidget {
 class _OnboardingPageState extends State<OnboardingPagePresenter> {
   // Store the currently visible page
   int _currentPage = 0;
+  bool _isLoading = true;
+
+  Map<String, PreferenceCategory> _preferences = {
+    'recreations': PreferenceCategory(data: [], isSelected: []),
+    'diets': PreferenceCategory(
+      isSelected: [],
+      data: [],
+    ),
+    'cuisines': PreferenceCategory(
+      isSelected: [],
+      data: [],
+    ),
+    'foodAllergies': PreferenceCategory(
+      isSelected: [],
+      data: [],
+    ),
+  };
+
   // Define a controller for the pageview
   final PageController _pageController = PageController(initialPage: 0);
 
   @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  _fetchData() async {
+    final recreations = await supabase.from("recreations").select();
+    final diets = await supabase.from("diets").select();
+    final cuisines = await supabase.from('cuisines').select();
+    final foodAllergies = await supabase.from('food_allergies').select();
+
+    setState(() {
+      _preferences = {
+        'foodAllergies': PreferenceCategory(
+          isSelected: List.filled(foodAllergies.length, false),
+          data: foodAllergies,
+        ),
+        'cuisines': PreferenceCategory(
+          isSelected: List.filled(cuisines.length, false),
+          data: cuisines,
+        ),
+        'recreations': PreferenceCategory(
+          isSelected: List.filled(recreations.length, false),
+          data: recreations,
+        ),
+        'diets': PreferenceCategory(
+          isSelected: List.filled(diets.length, false),
+          data: diets,
+        )
+      };
+
+      _isLoading = false;
+    });
+  }
+
+  _saveUsersPreferences() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final userId = supabase.auth.currentUser!.id;
+
+    final selectedRecreations = _preferences["recreations"]!
+        .isSelected
+        .mapIndexed((index, element) =>
+            element ? _preferences["recreations"]!.data[index] : null)
+        .whereNotNull()
+        .map((item) => ({
+              'user_id': userId,
+              'recreation_id': item["id"],
+            }))
+        .toList();
+
+    final selectedDiets = _preferences["diets"]!
+        .isSelected
+        .mapIndexed((index, element) =>
+            element ? _preferences["diets"]!.data[index] : null)
+        .whereNotNull()
+        .map((item) => ({
+              'user_id': userId,
+              'diet_id': item["id"],
+            }))
+        .toList();
+
+    final selectedCuisines = _preferences["cuisines"]!
+        .isSelected
+        .mapIndexed((index, element) =>
+            element ? _preferences["cuisines"]!.data[index] : null)
+        .whereNotNull()
+        .map((item) => ({
+              'user_id': userId,
+              'cuisine_id': item["id"],
+            }))
+        .toList();
+
+    final selectedFoodAllergies = _preferences["foodAllergies"]!
+        .isSelected
+        .mapIndexed((index, element) =>
+            element ? _preferences["foodAllergies"]!.data[index] : null)
+        .whereNotNull()
+        .map((item) => ({
+              'user_id': userId,
+              'food_allergy_id': item["id"],
+            }))
+        .toList();
+
+    try {
+      var futures = List.of([
+        supabase.from("user_recreations").upsert(
+              selectedRecreations,
+              ignoreDuplicates: true,
+            ),
+        supabase.from("user_diets").upsert(
+              selectedDiets,
+              ignoreDuplicates: true,
+            ),
+        supabase.from("user_cuisines").upsert(
+              selectedCuisines,
+              ignoreDuplicates: true,
+            ),
+        supabase.from("user_food_allergies").upsert(
+              selectedFoodAllergies,
+              ignoreDuplicates: true,
+            )
+      ]);
+
+      await Future.wait(futures).then((data) => {
+            setState(() {
+              _isLoading = false;
+            })
+          });
+    } catch (err) {
+      print(err);
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  _onFinish() async {
+    await _saveUsersPreferences();
+    widget.onFinish.call();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+          body: Center(
+        child: CircularProgressIndicator(),
+      ));
+    }
+    final key = widget.pages[_currentPage].dataKey;
+    final hasDataKey = key != null;
+
     return Scaffold(
       body: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
@@ -101,7 +255,6 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
                   controller: _pageController,
                   itemCount: widget.pages.length,
                   onPageChanged: (idx) {
-                    // Change current page when pageview changes
                     setState(() {
                       _currentPage = idx;
                     });
@@ -111,9 +264,8 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
                     return Column(
                       children: [
                         Expanded(
-                          flex: 3,
                           child: Padding(
-                            padding: const EdgeInsets.all(32.0),
+                            padding: const EdgeInsets.all(8.0),
                             child: Image.network(
                               item.imageUrl,
                             ),
@@ -153,7 +305,33 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
                   },
                 ),
               ),
-
+              hasDataKey
+                  ? Expanded(
+                      child: Wrap(
+                        spacing: 10,
+                        children:
+                            _preferences[key]!.data.mapIndexed((index, item) {
+                          return ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _preferences[key]!.isSelected[index] =
+                                    !_preferences[key]!.isSelected[index];
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  _preferences[key]!.isSelected[index]
+                                      ? Colors.purple[100]
+                                      : null,
+                            ),
+                            child: Text(
+                              item['name'],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    )
+                  : const SizedBox(),
               // Current page indicator
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -174,29 +352,35 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
 
               // Bottom buttons
               SizedBox(
-                height: 100,
+                height: 50,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    TextButton(
-                        style: TextButton.styleFrom(
-                            visualDensity: VisualDensity.comfortable,
-                            foregroundColor: Colors.white,
-                            textStyle: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                        onPressed: () {
-                          widget.onSkip.call();
-                        },
-                        child: const Text("Skip")),
+                    _currentPage != 0
+                        ? TextButton(
+                            style: TextButton.styleFrom(
+                                visualDensity: VisualDensity.comfortable,
+                                foregroundColor: Colors.black45,
+                                textStyle: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                            onPressed: () {
+                              _pageController.animateToPage(_currentPage - 1,
+                                  curve: Curves.easeInOutCubic,
+                                  duration: const Duration(milliseconds: 250));
+                            },
+                            child: const Text("Back"))
+                        : const SizedBox(),
                     TextButton(
                       style: TextButton.styleFrom(
                           visualDensity: VisualDensity.comfortable,
-                          foregroundColor: Colors.white,
+                          foregroundColor: Colors.black45,
                           textStyle: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          )),
                       onPressed: () {
                         if (_currentPage == widget.pages.length - 1) {
-                          widget.onFinish.call();
+                          _onFinish();
                         } else {
                           _pageController.animateToPage(_currentPage + 1,
                               curve: Curves.easeInOutCubic,
@@ -234,11 +418,23 @@ class OnboardingPageModel {
   final String imageUrl;
   final Color bgColor;
   final Color textColor;
+  final String? dataKey;
 
   OnboardingPageModel(
       {required this.title,
       required this.description,
       required this.imageUrl,
-      this.bgColor = Colors.blue,
-      this.textColor = Colors.white});
+      this.dataKey,
+      this.bgColor = Colors.white,
+      this.textColor = Colors.black87});
+}
+
+class PreferenceCategory {
+  List<bool> isSelected;
+  List<Map<String, dynamic>> data;
+
+  PreferenceCategory({
+    required this.isSelected,
+    required this.data,
+  });
 }
