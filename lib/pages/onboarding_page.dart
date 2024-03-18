@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:touchdown/constants/routes.dart';
 import 'package:touchdown/constants/supabase.dart';
 import 'package:collection/collection.dart';
