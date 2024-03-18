@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:touchdown/constants/routes.dart';
-import 'package:touchdown/constants/supabase.dart';
-import 'package:touchdown/pages/home_page.dart';
-import 'package:touchdown/pages/login_page.dart';
-import 'package:touchdown/pages/onboarding_page.dart';
+import 'package:dotted/constants/routes.dart';
+import 'package:dotted/constants/supabase.dart';
+import 'package:dotted/pages/home_page.dart';
+import 'package:dotted/pages/login_page.dart';
+import 'package:dotted/pages/onboarding_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

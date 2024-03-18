@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:touchdown/constants/routes.dart';
-import 'package:touchdown/constants/supabase.dart';
+import 'package:dotted/constants/routes.dart';
+import 'package:dotted/constants/supabase.dart';
 import 'package:collection/collection.dart';
 
 class OnboardingPage extends StatelessWidget {
@@ -30,7 +30,7 @@ class OnboardingPage extends StatelessWidget {
           },
           pages: [
             OnboardingPageModel(
-              title: 'Welcome to Touchdown!',
+              title: 'Welcome to Dotted!',
               description:
                   "Before we can begin, we have to get your travel preferences in order to serve you",
               imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',

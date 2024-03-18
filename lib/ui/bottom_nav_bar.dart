@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:touchdown/pages/home_page.dart';
+import 'package:dotted/pages/home_page.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({

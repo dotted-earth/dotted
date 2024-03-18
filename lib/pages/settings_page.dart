@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:touchdown/constants/routes.dart';
-import 'package:touchdown/constants/supabase.dart';
+import 'package:dotted/constants/routes.dart';
+import 'package:dotted/constants/supabase.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

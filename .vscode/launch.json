@@ -2,18 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "touchdown",
+      "name": "dotted",
       "request": "launch",
       "type": "dart"
     },
     {
-      "name": "touchdown (profile mode)",
+      "name": "dotted (profile mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "profile"
     },
     {
-      "name": "touchdown (release mode)",
+      "name": "dotted (release mode)",
       "request": "launch",
       "type": "dart",
       "flutterMode": "release"
