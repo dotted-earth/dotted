@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:touchdown/constants/routes.dart';
-import 'package:touchdown/constants/supabase.dart';
+import 'package:dotted/constants/routes.dart';
+import 'package:dotted/constants/supabase.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              "Touchdown",
+              "Dotted",
               style: TextStyle(fontSize: 48),
             ),
             Image.asset("assets/traveler.png"),
