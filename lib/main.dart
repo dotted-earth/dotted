@@ -24,15 +24,19 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: "Touchdown",
-        theme: ThemeData(primarySwatch: Colors.blue),
-        initialRoute:
-            supabase.auth.currentUser == null ? routes.login : routes.home,
-        routes: {
-          routes.login: (context) => const LoginPage(),
-          routes.home: (context) => const HomePage(),
-          routes.onboarding: (context) => const OnboardingPage()
-        });
+      debugShowCheckedModeBanner: false,
+      title: "Dotted",
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: true,
+      ),
+      initialRoute:
+          supabase.auth.currentUser == null ? routes.login : routes.home,
+      routes: {
+        routes.login: (context) => const LoginPage(),
+        routes.home: (context) => const HomePage(),
+        routes.onboarding: (context) => const OnboardingPage(),
+      },
+    );
   }
 }
