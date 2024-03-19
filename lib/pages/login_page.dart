@@ -19,25 +19,21 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     supabase.auth.onAuthStateChange.listen((data) async {
       if (data.event == AuthChangeEvent.signedIn) {
-        if (data.session?.refreshToken != null) {
-          supabase.auth.setSession(data.session!.refreshToken!);
-
-          try {
-            var userProfile = await supabase
-                .from("profiles")
-                .select('*')
-                .eq("id", data.session!.user.id)
-                .single();
-            if (userProfile['has_onboarded'] == false) {
-              await Navigator.pushNamedAndRemoveUntil(
-                  context, routes.onboarding, (_) => false);
-            } else {
-              await Navigator.pushNamedAndRemoveUntil(
-                  context, routes.home, (_) => false);
-            }
-          } catch (err) {
-            print(err);
+        try {
+          var userProfile = await supabase
+              .from("profiles")
+              .select('*')
+              .eq("id", data.session!.user.id)
+              .single();
+          if (userProfile['has_onboarded'] == false) {
+            await Navigator.pushNamedAndRemoveUntil(
+                context, routes.onboarding, (_) => false);
+          } else {
+            await Navigator.pushNamedAndRemoveUntil(
+                context, routes.home, (_) => false);
           }
+        } catch (err) {
+          print(err);
         }
       }
     });
