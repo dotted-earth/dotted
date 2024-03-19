@@ -20,21 +20,23 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void fetchUserProfile() async {
-    try {
-      // TODO - put in global state
-      final profile = await supabase
-          .from("profiles")
-          .select("username,full_name,avatar_url")
-          .eq("id", supabase.auth.currentUser!.id)
-          .single();
+    if (supabase.auth.currentUser != null) {
+      try {
+        // TODO - put in global state
+        final profile = await supabase
+            .from("profiles")
+            .select("username,full_name,avatar_url")
+            .eq("id", supabase.auth.currentUser!.id)
+            .single();
 
-      userNameController.text = profile["username"] ?? "";
-      fullNameController.text = profile['full_name'];
-      setState(() {
-        avatarUrl = profile["avatar_url"];
-      });
-    } catch (err) {
-      print(err);
+        userNameController.text = profile["username"] ?? "";
+        fullNameController.text = profile['full_name'];
+        setState(() {
+          avatarUrl = profile["avatar_url"];
+        });
+      } catch (err) {
+        print(err);
+      }
     }
   }
 
