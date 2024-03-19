@@ -1,3 +1,4 @@
+import 'package:dotted/env/env.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:dotted/constants/routes.dart';
@@ -10,9 +11,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: "https://mpombjrojblraufobsoo.supabase.co",
-    anonKey:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wb21ianJvamJscmF1Zm9ic29vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTAwNzcxODgsImV4cCI6MjAyNTY1MzE4OH0.DrOfh4Q5SzvhZH35fie7vgeUwb3kC8rSQJEZwpMNdXg",
+    url: Env.supabaseURL,
+    anonKey: Env.supabaseAnon,
   );
 
   runApp(const MainApp());

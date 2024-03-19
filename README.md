@@ -1,3 +1,3 @@
 # Dotted
 
-A new Flutter project.
+Last minute plans for the busy traveler.
