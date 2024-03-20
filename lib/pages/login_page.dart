@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:dotted/constants/routes.dart';
 import 'package:dotted/constants/supabase.dart';
@@ -50,7 +51,9 @@ class _LoginPageState extends State<LoginPage> {
               "Dotted",
               style: TextStyle(fontSize: 48),
             ),
-            Image.asset("assets/traveler.png"),
+            Lottie.asset(
+              "assets/lottie/circle_and_arcs.json",
+            ),
             const SizedBox(
               height: 12,
             ),
