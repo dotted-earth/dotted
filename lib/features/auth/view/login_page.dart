@@ -1,21 +1,22 @@
-import 'package:dotted/features/login/bloc/login_bloc.dart';
+import 'package:dotted/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dotted/constants/routes.dart';
 import 'package:lottie/lottie.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LoginBloc, LoginState>(
+    return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is LoginSuccess) {
+        if (state is AuthSuccess) {
           Navigator.pushNamedAndRemoveUntil(
               context, routes.onboarding, (_) => false);
         }
-        if (state is LoginFailure) {
+        if (state is AuthFailure) {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(title: Text(state.error)),
@@ -23,8 +24,8 @@ class LoginPage extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        final loginBloc = context.read<LoginBloc>();
-        final isLoading = state is LoginLoading && state.isLoading;
+        final loginBloc = context.read<AuthBloc>();
+        final isLoading = state is AuthLoading && state.isLoading;
 
         return Scaffold(
           body: Center(
@@ -50,7 +51,7 @@ class LoginPage extends StatelessWidget {
                   label: const Text("Sign-in with Google"),
                   icon: isLoading
                       ? const CircularProgressIndicator.adaptive()
-                      : const Icon(Icons.login),
+                      : Brand(Brands.google),
                 ),
               ],
             ),
