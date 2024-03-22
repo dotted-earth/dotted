@@ -1,4 +1,4 @@
-package day.touchdown.touchdown
+package earth.dotted.app
 
 import io.flutter.embedding.android.FlutterActivity
 
