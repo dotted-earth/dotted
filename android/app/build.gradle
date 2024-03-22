@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "day.touchdown.touchdown"
+    namespace "earth.dotted.app"
     compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
