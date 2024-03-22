@@ -4,13 +4,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-part 'login_event.dart';
-part 'login_state.dart';
+part 'auth_event.dart';
+part 'auth_state.dart';
 
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(LoginInitial()) {
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  AuthBloc() : super(AuthInitial()) {
     on<LoginWithGoogleRequest>((event, emit) async {
-      emit(LoginLoading(true));
+      emit(AuthLoading(true));
 
       const webClientId =
           '351644549750-u10n35gkg77igip6n4dk7r44vcba2s6q.apps.googleusercontent.com';
@@ -48,13 +48,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             accessToken: accessToken,
           );
 
-          emit(LoginSuccess());
+          emit(AuthSuccess());
         }
       } catch (err) {
-        emit(LoginFailure(err.toString()));
+        emit(AuthFailure(err.toString()));
       }
 
-      emit(LoginLoading(false));
+      emit(AuthLoading(false));
     });
   }
 }

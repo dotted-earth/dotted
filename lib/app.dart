@@ -1,6 +1,6 @@
 import 'package:dotted/constants/routes.dart';
 import 'package:dotted/constants/supabase.dart';
-import 'package:dotted/features/login/view/login_page.dart';
+import 'package:dotted/features/auth/view/login_page.dart';
 import 'package:dotted/pages/home_page.dart';
 import 'package:dotted/pages/onboarding_page.dart';
 import 'package:dotted/utils/theme/theme.dart';
