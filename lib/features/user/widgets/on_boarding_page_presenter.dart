@@ -1,102 +1,39 @@
-import 'package:flutter/material.dart';
-import 'package:dotted/constants/routes.dart';
-import 'package:dotted/constants/supabase.dart';
 import 'package:collection/collection.dart';
+import 'package:dotted/constants/supabase.dart';
+import 'package:dotted/features/user/models/on_boarding_page_model.dart';
+import 'package:dotted/features/user/models/user_preference_category_model.dart';
+import 'package:flutter/material.dart';
 
-class OnboardingPage extends StatelessWidget {
-  const OnboardingPage({Key? key}) : super(key: key);
-
-  finishOnboarding(context) async {
-    try {
-      await supabase
-          .from("profiles")
-          .update({"has_onboarded": true})
-          .eq("id", supabase.auth.currentUser!.id)
-          .then((_) async => {
-                await Navigator.pushNamedAndRemoveUntil(
-                    context, routes.home, (_) => false)
-              });
-    } catch (err) {
-      print(err);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: OnboardingPagePresenter(
-          onFinish: () {
-            finishOnboarding(context);
-          },
-          pages: [
-            OnboardingPageModel(
-              title: 'Welcome to Dotted!',
-              description:
-                  "Before we can begin, we have to get your travel preferences in order to serve you",
-              imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',
-            ),
-            OnboardingPageModel(
-              title: 'Recreations',
-              description: 'What kind of activities do you like?',
-              imageUrl: 'https://cdn-icons-png.freepik.com/512/962/962431.png',
-              dataKey: 'recreations',
-            ),
-            OnboardingPageModel(
-              title: 'Diets',
-              description: 'What is your general diet?',
-              imageUrl:
-                  'https://cdn-icons-png.freepik.com/512/3775/3775187.png',
-              dataKey: "diets",
-            ),
-            OnboardingPageModel(
-              title: 'Cuisines',
-              description: 'What kind of foods do you like?',
-              imageUrl:
-                  'https://cdn-icons-png.freepik.com/512/11040/11040884.png',
-              dataKey: "cuisines",
-            ),
-            OnboardingPageModel(
-              title: 'Food Allergies',
-              description: 'Do you have any food allergies?',
-              imageUrl:
-                  'https://cdn-icons-png.freepik.com/512/5282/5282049.png',
-              dataKey: "foodAllergies",
-            ),
-          ]),
-    );
-  }
-}
-
-class OnboardingPagePresenter extends StatefulWidget {
-  final List<OnboardingPageModel> pages;
+class OnBoardingPagePresenter extends StatefulWidget {
+  final List<OnBoardingPageModel> pages;
   final VoidCallback onFinish;
 
-  const OnboardingPagePresenter({
+  const OnBoardingPagePresenter({
     super.key,
     required this.pages,
     required this.onFinish,
   });
 
   @override
-  State<OnboardingPagePresenter> createState() => _OnboardingPageState();
+  State<OnBoardingPagePresenter> createState() => _OnboardingPageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPagePresenter> {
+class _OnboardingPageState extends State<OnBoardingPagePresenter> {
   // Store the currently visible page
   int _currentPage = 0;
   bool _isLoading = true;
 
-  Map<String, PreferenceCategory> _preferences = {
-    'recreations': PreferenceCategory(data: [], isSelected: []),
-    'diets': PreferenceCategory(
+  Map<String, UserPreferenceCategoryModel> _preferences = {
+    'recreations': UserPreferenceCategoryModel(data: [], isSelected: []),
+    'diets': UserPreferenceCategoryModel(
       isSelected: [],
       data: [],
     ),
-    'cuisines': PreferenceCategory(
+    'cuisines': UserPreferenceCategoryModel(
       isSelected: [],
       data: [],
     ),
-    'foodAllergies': PreferenceCategory(
+    'foodAllergies': UserPreferenceCategoryModel(
       isSelected: [],
       data: [],
     ),
@@ -119,19 +56,19 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
 
     setState(() {
       _preferences = {
-        'foodAllergies': PreferenceCategory(
+        'foodAllergies': UserPreferenceCategoryModel(
           isSelected: List.filled(foodAllergies.length, false),
           data: foodAllergies,
         ),
-        'cuisines': PreferenceCategory(
+        'cuisines': UserPreferenceCategoryModel(
           isSelected: List.filled(cuisines.length, false),
           data: cuisines,
         ),
-        'recreations': PreferenceCategory(
+        'recreations': UserPreferenceCategoryModel(
           isSelected: List.filled(recreations.length, false),
           data: recreations,
         ),
-        'diets': PreferenceCategory(
+        'diets': UserPreferenceCategoryModel(
           isSelected: List.filled(diets.length, false),
           data: diets,
         )
@@ -193,22 +130,10 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
 
     try {
       var futures = List.of([
-        supabase.from("user_recreations").upsert(
-              selectedRecreations,
-              ignoreDuplicates: true,
-            ),
-        supabase.from("user_diets").upsert(
-              selectedDiets,
-              ignoreDuplicates: true,
-            ),
-        supabase.from("user_cuisines").upsert(
-              selectedCuisines,
-              ignoreDuplicates: true,
-            ),
-        supabase.from("user_food_allergies").upsert(
-              selectedFoodAllergies,
-              ignoreDuplicates: true,
-            )
+        supabase.from("user_recreations").upsert(selectedRecreations),
+        supabase.from("user_diets").upsert(selectedDiets),
+        supabase.from("user_cuisines").upsert(selectedCuisines),
+        supabase.from("user_food_allergies").upsert(selectedFoodAllergies)
       ]);
 
       await Future.wait(futures).then((data) => {
@@ -408,31 +333,4 @@ class _OnboardingPageState extends State<OnboardingPagePresenter> {
       ),
     );
   }
-}
-
-class OnboardingPageModel {
-  final String title;
-  final String description;
-  final String imageUrl;
-  final Color bgColor;
-  final Color textColor;
-  final String? dataKey;
-
-  OnboardingPageModel(
-      {required this.title,
-      required this.description,
-      required this.imageUrl,
-      this.dataKey,
-      this.bgColor = Colors.white,
-      this.textColor = Colors.black87});
-}
-
-class PreferenceCategory {
-  List<bool> isSelected;
-  List<Map<String, dynamic>> data;
-
-  PreferenceCategory({
-    required this.isSelected,
-    required this.data,
-  });
 }

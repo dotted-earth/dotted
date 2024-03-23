@@ -1,7 +1,6 @@
 import 'package:dotted/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dotted/constants/routes.dart';
 import 'package:lottie/lottie.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -14,7 +13,7 @@ class LoginPage extends StatelessWidget {
       listener: (context, state) {
         if (state is AuthSuccess) {
           Navigator.pushNamedAndRemoveUntil(
-              context, routes.onboarding, (_) => false);
+              context, state.navigateToPage, (_) => false);
         }
         if (state is AuthFailure) {
           showDialog(
@@ -46,7 +45,7 @@ class LoginPage extends StatelessWidget {
                   onPressed: isLoading
                       ? null
                       : () {
-                          loginBloc.add(const LoginWithGoogleRequest());
+                          loginBloc.add(const AuthWithGoogleRequest());
                         },
                   label: const Text("Sign-in with Google"),
                   icon: isLoading

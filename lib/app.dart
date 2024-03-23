@@ -1,8 +1,8 @@
 import 'package:dotted/constants/routes.dart';
 import 'package:dotted/constants/supabase.dart';
 import 'package:dotted/features/auth/view/login_page.dart';
+import 'package:dotted/features/user/view/on_boarding_page.dart';
 import 'package:dotted/pages/home_page.dart';
-import 'package:dotted/pages/onboarding_page.dart';
 import 'package:dotted/utils/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +22,7 @@ class App extends StatelessWidget {
       routes: {
         routes.login: (context) => const LoginPage(),
         routes.home: (context) => const HomePage(),
-        routes.onboarding: (context) => const OnboardingPage(),
+        routes.onboarding: (context) => const OnBoardingPage(),
       },
     );
   }
