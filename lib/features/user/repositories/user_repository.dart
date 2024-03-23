@@ -18,6 +18,17 @@ class UserRepository {
     return _userProvider.getUser();
   }
 
+  Future<UserProfileModel> updateUserProfile(
+      String userId, UserProfileModel userProfile) async {
+    try {
+      final data = await _userProvider.updateUserProfile(userId, userProfile);
+
+      return UserProfileModel.fromMap(data);
+    } catch (err) {
+      throw err.toString();
+    }
+  }
+
   Future<UserProfileModel> getUserProfile(String userId) async {
     try {
       final userProfileData = await _userProvider.getUserProfile(userId);
@@ -40,12 +51,13 @@ class UserRepository {
     }
   }
 
-  void setUserRecreation(String userId, PreferenceItemModel preference) async {
+  Future<List<Map<String, dynamic>>> setUserRecreations(
+      String userId, List<PreferenceItemModel> preferences) async {
     try {
-      final p = await _userProvider.setUserRecreationPreference(
-          userId, preference.id);
+      final data =
+          await _userProvider.setUserRecreationPreferences(userId, preferences);
 
-      print(p);
+      return data;
     } catch (err) {
       throw err.toString();
     }
@@ -56,6 +68,18 @@ class UserRepository {
       final userDietsData = await _userProvider.getUserDietPreferences(userId);
 
       return userDietsData.map((data) => DietModel.fromMap(data)).toList();
+    } catch (err) {
+      throw err.toString();
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> setUserDiets(
+      String userId, List<PreferenceItemModel> preferences) async {
+    try {
+      final data =
+          await _userProvider.setUserDietPreferences(userId, preferences);
+
+      return data;
     } catch (err) {
       throw err.toString();
     }
@@ -73,6 +97,18 @@ class UserRepository {
     }
   }
 
+  Future<List<Map<String, dynamic>>> setUserCuisines(
+      String userId, List<PreferenceItemModel> preferences) async {
+    try {
+      final data =
+          await _userProvider.setUserCuisinePreferences(userId, preferences);
+
+      return data;
+    } catch (err) {
+      throw err.toString();
+    }
+  }
+
   Future<List<FoodAllergyModel>> getUserFoodAllergies(String userId) async {
     try {
       final userFoodAllergiesData =
@@ -80,6 +116,17 @@ class UserRepository {
       return userFoodAllergiesData
           .map((data) => FoodAllergyModel.fromMap(data))
           .toList();
+    } catch (err) {
+      throw err.toString();
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> setUserFoodAllergies(
+      String userId, List<PreferenceItemModel> allergies) async {
+    try {
+      final data = await _userProvider.setUserFoodAllergies(userId, allergies);
+
+      return data;
     } catch (err) {
       throw err.toString();
     }

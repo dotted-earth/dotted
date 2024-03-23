@@ -1,4 +1,5 @@
 import 'package:dotted/features/user/models/preference_item_model.dart';
+import 'package:dotted/features/user/models/user_profile_model.dart';
 import 'package:dotted/features/user/repositories/preferences_repository.dart';
 import 'package:dotted/features/user/repositories/user_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,12 +55,36 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
   }
 
   void _onBoardedFinishRequested(
-      OnBoardedFinishRequested event, Emitter<OnBoardingState> emit) {
+      OnBoardedFinishRequested event, Emitter<OnBoardingState> emit) async {
+    emit(OnBoardingLoading());
+
+    final user = _userRepository.getUser()!;
     final userRecreations = event.userRecreations;
     final userDiets = event.userDiets;
     final userCuisines = event.userCuisines;
     final userFoodAllergies = event.userFoodAllergies;
 
-    // TODO - update on boarding
+    try {
+      final userProfile = await _userRepository.getUserProfile(user.id);
+      final newUserProfile = UserProfileModel(
+        id: user.id,
+        username: userProfile.username,
+        fullName: userProfile.fullName,
+        isEmailVerified: userProfile.isEmailVerified,
+        hasOnBoarded: true,
+      );
+
+      await Future.wait([
+        _userRepository.setUserRecreations(user.id, userRecreations),
+        _userRepository.setUserDiets(user.id, userDiets),
+        _userRepository.setUserCuisines(user.id, userCuisines),
+        _userRepository.setUserFoodAllergies(user.id, userFoodAllergies),
+        _userRepository.updateUserProfile(user.id, newUserProfile)
+      ]);
+
+      emit(OnBoardedFinished());
+    } catch (err) {
+      emit(OnBoardingFailure(err.toString()));
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'package:dotted/features/user/bloc/on_boarding_bloc.dart';
 import 'package:dotted/features/user/models/on_boarding_page_model.dart';
 import 'package:dotted/features/user/models/preference_item_model.dart';
 import 'package:dotted/features/user/presentations/widgets/on_boarding_page_presenter.dart';
+import 'package:dotted/utils/constants/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -63,12 +64,14 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<OnBoardingBloc, OnBoardingState>(
-        builder: (context, state) {
-          if (state is OnBoardingInitial) {
-            return const Scaffold();
+      body: BlocConsumer<OnBoardingBloc, OnBoardingState>(
+        listener: (context, state) {
+          if (state is OnBoardedFinished) {
+            Navigator.pushNamedAndRemoveUntil(
+                context, routes.home, (_) => false);
           }
-
+        },
+        builder: (context, state) {
           if (state is OnBoardingFailure) {
             return Scaffold(
               body: Center(
@@ -77,7 +80,9 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
             );
           }
 
-          if (state is OnBoardingLoading) {
+          if (state is OnBoardingLoading ||
+              state is OnBoardingInitial ||
+              state is OnBoardedFinished) {
             return const Scaffold(
                 body: Center(
               child: CircularProgressIndicator(),
