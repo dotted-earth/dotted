@@ -5,7 +5,11 @@ sealed class AuthState {}
 
 final class AuthInitial extends AuthState {}
 
-final class AuthSuccess extends AuthState {}
+final class AuthSuccess extends AuthState {
+  final String navigateToPage;
+
+  AuthSuccess({required this.navigateToPage});
+}
 
 final class AuthFailure extends AuthState {
   final String error;

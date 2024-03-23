@@ -20,9 +20,9 @@ class UserProfileModel {
     return <String, dynamic>{
       'id': id,
       'username': username,
-      'fullName': fullName,
-      'isEmailVerified': isEmailVerified,
-      'hasOnBoarded': hasOnBoarded,
+      'full_name': fullName,
+      'is_email_verified': isEmailVerified,
+      'has_on_boarded': hasOnBoarded,
     };
   }
 
@@ -32,7 +32,7 @@ class UserProfileModel {
       username: map['username'] != null ? map['username'] as String : null,
       fullName: map['full_name'] != null ? map['full_name'] as String : null,
       isEmailVerified: map['is_email_verified'] as bool,
-      hasOnBoarded: map['has_onboarded'] as bool,
+      hasOnBoarded: map['has_on_boarded'] as bool,
     );
   }
 
