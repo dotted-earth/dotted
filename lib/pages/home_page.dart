@@ -3,7 +3,7 @@ import 'package:dotted/pages/dashboard_page.dart';
 import 'package:dotted/pages/itineraries_page.dart';
 import 'package:dotted/pages/profile_page.dart';
 import 'package:dotted/pages/settings_page.dart';
-import 'package:dotted/ui/bottom_nav_bar.dart';
+import 'package:dotted/common/widgets/bottom_nav_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

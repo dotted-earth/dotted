@@ -13,10 +13,12 @@ void main() async {
     anonKey: Env.supabaseAnon,
   );
 
-  runApp(MultiBlocProvider(
-    providers: [
-      BlocProvider(create: (context) => AuthBloc()),
-    ],
-    child: const App(),
-  ));
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AuthBloc()),
+      ],
+      child: const App(),
+    ),
+  );
 }

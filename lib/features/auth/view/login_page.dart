@@ -45,7 +45,7 @@ class LoginPage extends StatelessWidget {
                   onPressed: isLoading
                       ? null
                       : () {
-                          loginBloc.add(const AuthWithGoogleRequest());
+                          loginBloc.add(const AuthLoginWithGoogleRequested());
                         },
                   label: const Text("Sign-in with Google"),
                   icon: isLoading
