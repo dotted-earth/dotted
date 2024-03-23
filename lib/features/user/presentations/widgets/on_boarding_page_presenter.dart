@@ -1,7 +1,4 @@
-import 'package:collection/collection.dart';
-import 'package:dotted/constants/supabase.dart';
 import 'package:dotted/features/user/models/on_boarding_page_model.dart';
-import 'package:dotted/features/user/models/user_preference_category_model.dart';
 import 'package:flutter/material.dart';
 
 class OnBoardingPagePresenter extends StatefulWidget {
@@ -19,152 +16,16 @@ class OnBoardingPagePresenter extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnBoardingPagePresenter> {
-  // Store the currently visible page
   int _currentPage = 0;
-  bool _isLoading = true;
-
-  Map<String, UserPreferenceCategoryModel> _preferences = {
-    'recreations': UserPreferenceCategoryModel(data: [], isSelected: []),
-    'diets': UserPreferenceCategoryModel(
-      isSelected: [],
-      data: [],
-    ),
-    'cuisines': UserPreferenceCategoryModel(
-      isSelected: [],
-      data: [],
-    ),
-    'foodAllergies': UserPreferenceCategoryModel(
-      isSelected: [],
-      data: [],
-    ),
-  };
-
-  // Define a controller for the pageview
   final PageController _pageController = PageController(initialPage: 0);
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchData();
-  }
-
-  _fetchData() async {
-    final recreations = await supabase.from("recreations").select();
-    final diets = await supabase.from("diets").select();
-    final cuisines = await supabase.from('cuisines').select();
-    final foodAllergies = await supabase.from('food_allergies').select();
-
-    setState(() {
-      _preferences = {
-        'foodAllergies': UserPreferenceCategoryModel(
-          isSelected: List.filled(foodAllergies.length, false),
-          data: foodAllergies,
-        ),
-        'cuisines': UserPreferenceCategoryModel(
-          isSelected: List.filled(cuisines.length, false),
-          data: cuisines,
-        ),
-        'recreations': UserPreferenceCategoryModel(
-          isSelected: List.filled(recreations.length, false),
-          data: recreations,
-        ),
-        'diets': UserPreferenceCategoryModel(
-          isSelected: List.filled(diets.length, false),
-          data: diets,
-        )
-      };
-
-      _isLoading = false;
-    });
-  }
-
-  _saveUsersPreferences() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final userId = supabase.auth.currentUser!.id;
-
-    final selectedRecreations = _preferences["recreations"]!
-        .isSelected
-        .mapIndexed((index, element) =>
-            element ? _preferences["recreations"]!.data[index] : null)
-        .whereNotNull()
-        .map((item) => ({
-              'user_id': userId,
-              'recreation_id': item["id"],
-            }))
-        .toList();
-
-    final selectedDiets = _preferences["diets"]!
-        .isSelected
-        .mapIndexed((index, element) =>
-            element ? _preferences["diets"]!.data[index] : null)
-        .whereNotNull()
-        .map((item) => ({
-              'user_id': userId,
-              'diet_id': item["id"],
-            }))
-        .toList();
-
-    final selectedCuisines = _preferences["cuisines"]!
-        .isSelected
-        .mapIndexed((index, element) =>
-            element ? _preferences["cuisines"]!.data[index] : null)
-        .whereNotNull()
-        .map((item) => ({
-              'user_id': userId,
-              'cuisine_id': item["id"],
-            }))
-        .toList();
-
-    final selectedFoodAllergies = _preferences["foodAllergies"]!
-        .isSelected
-        .mapIndexed((index, element) =>
-            element ? _preferences["foodAllergies"]!.data[index] : null)
-        .whereNotNull()
-        .map((item) => ({
-              'user_id': userId,
-              'food_allergy_id': item["id"],
-            }))
-        .toList();
-
-    try {
-      var futures = List.of([
-        supabase.from("user_recreations").upsert(selectedRecreations),
-        supabase.from("user_diets").upsert(selectedDiets),
-        supabase.from("user_cuisines").upsert(selectedCuisines),
-        supabase.from("user_food_allergies").upsert(selectedFoodAllergies)
-      ]);
-
-      await Future.wait(futures).then((data) => {
-            setState(() {
-              _isLoading = false;
-            })
-          });
-    } catch (err) {
-      print(err);
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
   _onFinish() async {
-    await _saveUsersPreferences();
     widget.onFinish.call();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-          body: Center(
-        child: CircularProgressIndicator(),
-      ));
-    }
-    final key = widget.pages[_currentPage].dataKey;
-    final hasDataKey = key != null;
-
+    final preferences = widget.pages[_currentPage].preferences;
     return Scaffold(
       body: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
@@ -173,7 +34,6 @@ class _OnboardingPageState extends State<OnBoardingPagePresenter> {
           child: Column(
             children: [
               Expanded(
-                // Pageview to render each page
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: widget.pages.length,
@@ -228,27 +88,25 @@ class _OnboardingPageState extends State<OnBoardingPagePresenter> {
                   },
                 ),
               ),
-              hasDataKey
+              preferences.isNotEmpty
                   ? Expanded(
                       child: Wrap(
                         spacing: 10,
-                        children:
-                            _preferences[key]!.data.mapIndexed((index, item) {
+                        children: preferences.map((item) {
+                          final activeItem = widget
+                              .pages[_currentPage].selectedPreferences
+                              .contains(item);
                           return ElevatedButton(
                             onPressed: () {
-                              setState(() {
-                                _preferences[key]!.isSelected[index] =
-                                    !_preferences[key]!.isSelected[index];
-                              });
+                              widget.pages[_currentPage]
+                                  .onPreferenceSelected(item);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
-                                  _preferences[key]!.isSelected[index]
-                                      ? Colors.purple[100]
-                                      : null,
+                                  activeItem ? Colors.purple.shade100 : null,
                             ),
                             child: Text(
-                              item['name'],
+                              item.name,
                             ),
                           );
                         }).toList(),

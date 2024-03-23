@@ -30,7 +30,7 @@ class FoodAllergyModel {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
-      'created_at': createdAt.millisecondsSinceEpoch,
+      'created_at': createdAt.toIso8601String(),
       'name': name,
       'description': description,
     };
@@ -39,7 +39,7 @@ class FoodAllergyModel {
   factory FoodAllergyModel.fromMap(Map<String, dynamic> map) {
     return FoodAllergyModel(
       id: map['id'] as int,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
+      createdAt: DateTime.parse(map['created_at']),
       name: map['name'] as String,
       description:
           map['description'] != null ? map['description'] as String : null,

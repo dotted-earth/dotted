@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dotted/constants/supabase.dart';
+import 'package:dotted/utils/constants/supabase.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

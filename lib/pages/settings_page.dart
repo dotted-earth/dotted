@@ -1,6 +1,6 @@
 import 'package:dotted/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:dotted/constants/routes.dart';
+import 'package:dotted/utils/constants/routes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -66,7 +66,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   icon: const Icon(Icons.logout),
                   label: const Text("Sign out"),
                   onPressed: () {
-                    context.read<AuthBloc>().add(const AuthSignOutRequest());
+                    context.read<AuthBloc>().add(const AuthLogOutRequested());
                   },
                 )
               ],

@@ -39,7 +39,7 @@ class DietModel {
   factory DietModel.fromMap(Map<String, dynamic> map) {
     return DietModel(
       id: map['id'] as int,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at'] as int),
+      createdAt: DateTime.parse(map['created_at']),
       name: map['name'] as String,
       description:
           map['description'] != null ? map['description'] as String : null,

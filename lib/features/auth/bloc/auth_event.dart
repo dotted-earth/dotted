@@ -5,10 +5,10 @@ sealed class AuthEvent {
   const AuthEvent();
 }
 
-final class AuthWithGoogleRequest extends AuthEvent {
-  const AuthWithGoogleRequest();
+final class AuthLoginWithGoogleRequested extends AuthEvent {
+  const AuthLoginWithGoogleRequested();
 }
 
-final class AuthSignOutRequest extends AuthEvent {
-  const AuthSignOutRequest();
+final class AuthLogOutRequested extends AuthEvent {
+  const AuthLogOutRequested();
 }

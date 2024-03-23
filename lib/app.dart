@@ -1,10 +1,16 @@
-import 'package:dotted/constants/routes.dart';
-import 'package:dotted/constants/supabase.dart';
+import 'package:dotted/utils/constants/routes.dart';
+import 'package:dotted/utils/constants/supabase.dart';
 import 'package:dotted/features/auth/view/login_page.dart';
-import 'package:dotted/features/user/view/on_boarding_page.dart';
+import 'package:dotted/features/user/bloc/on_boarding_bloc.dart';
+import 'package:dotted/features/user/presentations/screens/on_boarding_page.dart';
+import 'package:dotted/features/user/providers/preferences_provider.dart';
+import 'package:dotted/features/user/providers/user_provider.dart';
+import 'package:dotted/features/user/repositories/preferences_repository.dart';
+import 'package:dotted/features/user/repositories/user_repository.dart';
 import 'package:dotted/pages/home_page.dart';
 import 'package:dotted/utils/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -22,7 +28,21 @@ class App extends StatelessWidget {
       routes: {
         routes.login: (context) => const LoginPage(),
         routes.home: (context) => const HomePage(),
-        routes.onboarding: (context) => const OnBoardingPage(),
+        routes.onboarding: (context) => MultiRepositoryProvider(
+              providers: [
+                RepositoryProvider<PreferencesRepository>(
+                    create: (context) =>
+                        PreferencesRepository(PreferencesProvider())),
+                RepositoryProvider<UserRepository>(
+                    create: (context) => UserRepository(UserProvider()))
+              ],
+              child: BlocProvider(
+                create: (context) => OnBoardingBloc(
+                    context.read<PreferencesRepository>(),
+                    context.read<UserRepository>()),
+                child: const OnBoardingPage(),
+              ),
+            ),
       },
     );
   }
