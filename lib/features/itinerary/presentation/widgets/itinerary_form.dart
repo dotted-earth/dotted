@@ -1,3 +1,6 @@
+import 'package:bottom_picker/bottom_picker.dart';
+import 'package:bottom_picker/resources/arrays.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 const formControl = SizedBox(height: 24);
@@ -58,12 +61,32 @@ class DestinationForm extends StatelessWidget {
               border: OutlineInputBorder(), labelText: "Destination"),
         ),
         formControl,
-        InputDatePickerFormField(
-          firstDate: DateTime.now(),
-          lastDate: DateTime(2050, 12, 31),
-          acceptEmptyDate: false,
-          fieldLabelText: "Start Date",
-        ),
+        ElevatedButton.icon(
+            onPressed: () {
+              final now = DateTime.now();
+              BottomPicker.date(
+                pickerTitle: const Text(
+                  'Set your Start Date',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                dateOrder: DatePickerDateOrder.dmy,
+                initialDateTime: now,
+                maxDateTime: DateTime(now.year + 3),
+                minDateTime: now,
+                pickerTextStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+                onSubmit: (index) {
+                  print(index);
+                },
+                bottomPickerTheme: BottomPickerTheme.plumPlate,
+              ).show(context);
+            },
+            icon: const Icon(Icons.calendar_month),
+            label: const Text("Start Date")),
         formControl,
         const TextField(
           keyboardType: TextInputType.number,

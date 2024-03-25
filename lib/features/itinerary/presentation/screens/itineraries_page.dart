@@ -1,4 +1,6 @@
-import 'package:dotted/ui/itinerary_form.dart';
+import 'package:dotted/features/itinerary/presentation/screens/past_itineraries_page.dart';
+import 'package:dotted/features/itinerary/presentation/screens/upcoming_itineraries_page.dart';
+import 'package:dotted/features/itinerary/presentation/widgets/itinerary_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -48,12 +50,8 @@ class _ItinerariesPageState extends State<ItinerariesPage>
             child: TabBarView(
               controller: _tabController,
               children: const <Widget>[
-                Center(
-                  child: Text("There's nothing here"),
-                ),
-                Center(
-                  child: Text("There's nothing here"),
-                ),
+                UpcomingItinerariesPage(),
+                PastItinerariesPage(),
               ],
             ),
           ),

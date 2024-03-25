@@ -51,11 +51,11 @@ class UserRepository {
     }
   }
 
-  Future<List<Map<String, dynamic>>> setUserRecreations(
+  Future<List<Map<String, dynamic>>> createUserRecreations(
       String userId, List<PreferenceItemModel> preferences) async {
     try {
-      final data =
-          await _userProvider.setUserRecreationPreferences(userId, preferences);
+      final data = await _userProvider.createUserRecreationPreferences(
+          userId, preferences);
 
       return data;
     } catch (err) {
@@ -73,11 +73,11 @@ class UserRepository {
     }
   }
 
-  Future<List<Map<String, dynamic>>> setUserDiets(
+  Future<List<Map<String, dynamic>>> createUserDiets(
       String userId, List<PreferenceItemModel> preferences) async {
     try {
       final data =
-          await _userProvider.setUserDietPreferences(userId, preferences);
+          await _userProvider.createUserDietPreferences(userId, preferences);
 
       return data;
     } catch (err) {
@@ -97,11 +97,11 @@ class UserRepository {
     }
   }
 
-  Future<List<Map<String, dynamic>>> setUserCuisines(
+  Future<List<Map<String, dynamic>>> createUserCuisines(
       String userId, List<PreferenceItemModel> preferences) async {
     try {
       final data =
-          await _userProvider.setUserCuisinePreferences(userId, preferences);
+          await _userProvider.createUserCuisinePreferences(userId, preferences);
 
       return data;
     } catch (err) {
@@ -121,10 +121,11 @@ class UserRepository {
     }
   }
 
-  Future<List<Map<String, dynamic>>> setUserFoodAllergies(
+  Future<List<Map<String, dynamic>>> createUserFoodAllergies(
       String userId, List<PreferenceItemModel> allergies) async {
     try {
-      final data = await _userProvider.setUserFoodAllergies(userId, allergies);
+      final data =
+          await _userProvider.createUserFoodAllergies(userId, allergies);
 
       return data;
     } catch (err) {
