@@ -1,12 +1,19 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:dotted/common/models/media_modal.dart';
+import 'package:dotted/common/providers/media_provider.dart';
+import 'package:dotted/common/repositories/unsplash_repository.dart';
 import 'package:dotted/features/itinerary/models/itinerary_model.dart';
 import 'package:dotted/features/itinerary/provider/itineraries_provider.dart';
 
 class ItinerariesRepository {
-  final ItinerariesProvider _itinerariesProvider;
+  late ItinerariesProvider _itinerariesProvider;
+  late UnsplashRepository _unsplashRepository;
 
-  ItinerariesRepository(ItinerariesProvider upcomingItinerariesProvider)
-      : _itinerariesProvider = upcomingItinerariesProvider;
+  ItinerariesRepository(ItinerariesProvider upcomingItinerariesProvider,
+      UnsplashRepository unsplashRepository)
+      : super() {
+    _itinerariesProvider = upcomingItinerariesProvider;
+    _unsplashRepository = unsplashRepository;
+  }
 
   Future<List<ItineraryModel>> getUpcomingItineraries(String userId) async {
     try {
@@ -18,6 +25,23 @@ class ItinerariesRepository {
           .toList();
 
       return upcomingItineraries;
+    } catch (err) {
+      throw err.toString();
+    }
+  }
+
+  Future<ItineraryModel> createItinerary(ItineraryModel itinerary) async {
+    try {
+      final imageResponse =
+          await _unsplashRepository.getRandomImage(itinerary.destination);
+      final MediaProvider mediaProvider = MediaProvider();
+      final mediaResponse = await mediaProvider.createMedia(imageResponse);
+
+      final media = MedialModel.fromMap(mediaResponse);
+      itinerary.media = media;
+      final data = await _itinerariesProvider.createItinerary(itinerary);
+
+      return ItineraryModel.fromMap(data);
     } catch (err) {
       throw err.toString();
     }

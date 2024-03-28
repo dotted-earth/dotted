@@ -1,8 +1,8 @@
+import 'package:dotted/features/itinerary/models/itinerary_model.dart';
 import 'package:dotted/features/itinerary/presentation/screens/past_itineraries_page.dart';
 import 'package:dotted/features/itinerary/presentation/screens/upcoming_itineraries_page.dart';
 import 'package:dotted/features/itinerary/presentation/widgets/itinerary_form.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ItinerariesPage extends StatefulWidget {
   const ItinerariesPage({super.key});
@@ -14,6 +14,7 @@ class ItinerariesPage extends StatefulWidget {
 class _ItinerariesPageState extends State<ItinerariesPage>
     with TickerProviderStateMixin {
   late final TabController _tabController;
+  GlobalKey upcomingItinerariesKey = GlobalKey();
 
   @override
   void initState() {
@@ -49,17 +50,17 @@ class _ItinerariesPageState extends State<ItinerariesPage>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const <Widget>[
-                UpcomingItinerariesPage(),
-                PastItinerariesPage(),
+              children: [
+                UpcomingItinerariesPage(key: upcomingItinerariesKey),
+                const PastItinerariesPage(),
               ],
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
+        onPressed: () async {
+          final data = await showModalBottomSheet(
               context: context,
               builder: (context) {
                 return AnimatedContainer(
@@ -81,11 +82,17 @@ class _ItinerariesPageState extends State<ItinerariesPage>
                           )
                         ],
                       ),
-                      ItineraryForm()
+                      const ItineraryForm()
                     ],
                   ),
                 );
               });
+
+          if (data is ItineraryModel) {
+            setState(() {
+              upcomingItinerariesKey = GlobalKey();
+            });
+          }
         },
         elevation: 0,
         shape: const CircleBorder(),

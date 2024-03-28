@@ -8,3 +8,9 @@ sealed class UpcomingItinerariesEvent extends Equatable {
 }
 
 final class UpcomingItinerariesRequested extends UpcomingItinerariesEvent {}
+
+final class CreateItineraryRequested extends UpcomingItinerariesEvent {
+  final ItineraryModel itinerary;
+
+  const CreateItineraryRequested(this.itinerary);
+}

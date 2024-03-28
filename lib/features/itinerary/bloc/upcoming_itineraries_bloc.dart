@@ -14,11 +14,11 @@ class UpcomingItinerariesBloc
   UpcomingItinerariesBloc(ItinerariesRepository upcomingItinerariesRepository)
       : super(UpcomingItinerariesInitial()) {
     _upcomingItinerariesRepository = upcomingItinerariesRepository;
-
     on<UpcomingItinerariesRequested>(_upcomingItinerariesRequest);
+    on<CreateItineraryRequested>(_createItineraryRequested);
   }
 
-  _upcomingItinerariesRequest(UpcomingItinerariesRequested event,
+  void _upcomingItinerariesRequest(UpcomingItinerariesRequested event,
       Emitter<UpcomingItinerariesState> emit) async {
     emit(UpcomingItinerariesLoading());
 
@@ -29,5 +29,12 @@ class UpcomingItinerariesBloc
     } catch (err) {
       emit(UpcomingItinerariesFailure(err.toString()));
     }
+  }
+
+  void _createItineraryRequested(
+      CreateItineraryRequested event, Emitter<UpcomingItinerariesState> emit) {
+    final itinerary = event.itinerary;
+
+    _upcomingItinerariesRepository.createItinerary(itinerary);
   }
 }

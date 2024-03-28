@@ -1,5 +1,6 @@
 import 'package:dotted/features/itinerary/bloc/upcoming_itineraries_bloc.dart';
 import 'package:dotted/features/itinerary/models/itinerary_model.dart';
+import 'package:dotted/features/itinerary/presentation/widgets/itinerary_list_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -51,7 +52,7 @@ class _UpcomingItinerariesListState extends State<UpcomingItinerariesList> {
             itemCount: upcomingItineraries.length,
             itemBuilder: (context, index) {
               final upcomingItinerary = upcomingItineraries[index];
-              return Text("$upcomingItinerary");
+              return ItineraryListCard(itinerary: upcomingItinerary);
             });
       },
     );

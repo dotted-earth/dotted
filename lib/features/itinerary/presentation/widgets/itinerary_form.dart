@@ -1,7 +1,17 @@
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:bottom_picker/resources/arrays.dart';
+import 'package:dotted/common/providers/unsplash_provider.dart';
+import 'package:dotted/common/repositories/unsplash_repository.dart';
+import 'package:dotted/features/itinerary/models/itinerary_model.dart';
+import 'package:dotted/features/itinerary/models/itinerary_status_enum.dart';
+import 'package:dotted/features/itinerary/provider/itineraries_provider.dart';
+import 'package:dotted/features/itinerary/repositories/itineraries_repository.dart';
+import 'package:dotted/utils/constants/supabase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import "package:flutter_bloc/flutter_bloc.dart";
+import 'package:intl/intl.dart';
 
 const formControl = SizedBox(height: 24);
 
@@ -26,15 +36,13 @@ class _ItineraryFormState extends State<ItineraryForm> {
   @override
   void initState() {
     super.initState();
-
     _lengthOfStayController.addListener(
       () {
-        if (_lengthOfStayController.text.isNotEmpty) {
-          final lengthOfDays = int.tryParse(_lengthOfStayController.text) ?? 0;
-          setState(() {
-            _endDate = _startDate.subtract(Duration(days: lengthOfDays));
-          });
-        }
+        final lengthOfStay = _getLengthOfStay();
+        setState(() {
+          _endDate = _startDate
+              .add(Duration(days: lengthOfStay > 0 ? lengthOfStay - 1 : 0));
+        });
       },
     );
   }
@@ -47,6 +55,11 @@ class _ItineraryFormState extends State<ItineraryForm> {
     _budgetController.dispose();
 
     super.dispose();
+  }
+
+  int _getLengthOfStay() {
+    final lengthOfDays = int.tryParse(_lengthOfStayController.text) ?? 0;
+    return lengthOfDays;
   }
 
   void _onSelectedIndex(int index) {
@@ -65,20 +78,42 @@ class _ItineraryFormState extends State<ItineraryForm> {
     if (date is DateTime) {
       setState(() {
         _startDate = date;
-        if (_lengthOfStayController.text.isNotEmpty) {
-          final lengthOfDays = int.tryParse(_lengthOfStayController.text) ?? 0;
-          _endDate = date.subtract(Duration(days: lengthOfDays));
-        }
+        final lengthOfStay = _getLengthOfStay();
+        _endDate =
+            date.add(Duration(days: lengthOfStay > 0 ? lengthOfStay - 1 : 0));
       });
     }
   }
 
-  void _onGenerateItinerary() {
+  void _onGenerateItinerary() async {
     // TODO - validate form
-    // TODO - create itinerary
-    // TODO - close bottom sheet if successful
     // TODO - refetch upcoming itineraries
-    Navigator.pop(context);
+
+    final lengthOfStay = int.tryParse(_lengthOfStayController.text);
+
+    final itinerary = ItineraryModel(
+      userId: supabase.auth.currentUser!.id,
+      startDate: _startDate,
+      endDate: _endDate,
+      lengthOfStay: lengthOfStay ?? 0,
+      destination: _destinationController.text,
+      budget: int.tryParse(_budgetController.text) ?? 0,
+      itineraryStatus: ItineraryStatusEnum.ai_pending,
+    );
+
+    ItinerariesRepository repo = ItinerariesRepository(
+        ItinerariesProvider(), UnsplashRepository(UnsplashProvider()));
+    try {
+      final itin = await repo.createItinerary(itinerary);
+      if (mounted) {
+        Navigator.pop(context, itin);
+      }
+    } catch (err) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(err.toString())));
+      }
+    }
   }
 
   @override
@@ -89,6 +124,8 @@ class _ItineraryFormState extends State<ItineraryForm> {
         destinationController: _destinationController,
         lengthOfStayController: _lengthOfStayController,
         onStartDateChange: _onStartDateChange,
+        startDate: _startDate,
+        endDate: _endDate,
       ),
       AccommodationForm(
         onSelectedIndex: _onSelectedIndex,
@@ -116,11 +153,15 @@ class DestinationForm extends StatelessWidget {
     required this.onStartDateChange,
     required this.destinationController,
     required this.lengthOfStayController,
+    required this.startDate,
+    required this.endDate,
   });
   final ValueChanged<int> onSelectedIndex;
   final ValueChanged<DateTime> onStartDateChange;
   final TextEditingController destinationController;
   final TextEditingController lengthOfStayController;
+  final DateTime startDate;
+  final DateTime endDate;
 
   @override
   Widget build(BuildContext context) {
@@ -136,41 +177,71 @@ class DestinationForm extends StatelessWidget {
           ),
         ),
         formControl,
-        ElevatedButton.icon(
-            onPressed: () {
-              final now = DateTime.now();
-              BottomPicker.date(
-                pickerTitle: const Text(
-                  'Set your Start Date',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+        Row(
+          children: [
+            ElevatedButton.icon(
+              onPressed: () {
+                final now = DateTime.now();
+                BottomPicker.date(
+                  pickerTitle: const Text(
+                    'Set your Start Date',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                dateOrder: DatePickerDateOrder.dmy,
-                initialDateTime: now,
-                maxDateTime: DateTime(now.year + 3),
-                minDateTime: now,
-                pickerTextStyle: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-                onSubmit: (date) {
-                  onStartDateChange(date);
-                },
-                bottomPickerTheme: BottomPickerTheme.plumPlate,
-              ).show(context);
-            },
-            icon: const Icon(Icons.calendar_month),
-            label: const Text("Start Date")),
+                  dateOrder: DatePickerDateOrder.dmy,
+                  initialDateTime: startDate,
+                  maxDateTime: DateTime(now.year + 3),
+                  minDateTime: DateTime(now.year, now.month, now.day),
+                  pickerTextStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                  onSubmit: (date) {
+                    onStartDateChange(date);
+                  },
+                  bottomPickerTheme: BottomPickerTheme.plumPlate,
+                ).show(context);
+              },
+              icon: const Icon(Icons.calendar_month),
+              label: const Text("Start Date"),
+            ),
+            Expanded(
+              child: Text(
+                DateFormat.yMd().format(startDate),
+                textAlign: TextAlign.center,
+                textHeightBehavior:
+                    const TextHeightBehavior(applyHeightToLastDescent: false),
+                style: const TextStyle(fontSize: 20),
+              ),
+            )
+          ],
+        ),
         formControl,
-        TextField(
-          controller: lengthOfStayController,
-          keyboardType: const TextInputType.numberWithOptions(),
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: "Length of Stay",
-            constraints: BoxConstraints(maxWidth: 141),
-          ),
+        Row(
+          children: [
+            TextField(
+              controller: lengthOfStayController,
+              keyboardType: const TextInputType.numberWithOptions(),
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Length of Stay",
+                constraints: BoxConstraints(maxWidth: 141),
+              ),
+            ),
+            Expanded(
+              child: Text(
+                endDate.isAfter(startDate)
+                    ? "End date: ${DateFormat.yMd().format(endDate)}"
+                    : "",
+                textAlign: TextAlign.center,
+                textHeightBehavior: const TextHeightBehavior(
+                  applyHeightToLastDescent: false,
+                ),
+                style: const TextStyle(fontSize: 16),
+              ),
+            )
+          ],
         ),
         formControl,
         Row(
