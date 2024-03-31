@@ -9,22 +9,38 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  collection: ^1.18.0
+
+  # OAuth Providers
   google_sign_in: ^6.2.1
+
+  # Database
   supabase_flutter: ^2.3.4
+
+  # Env Var Manager
   envied: ^0.5.3
+
+  # State Management
+  flutter_bloc: ^8.1.4
+
+  # Widgets
+  lottie: ^3.1.0
+  icons_plus: ^5.0.0
+  bottom_picker: ^2.6.0
+
+  # Utils
+  collection: ^1.18.0
+  meta: ^1.11.0
+  equatable: ^2.0.5
+  http: ^1.2.1
+  intl: ^0.19.0
+  csv: ^6.0.0
+
+  # SQLlite for local storage
+  sqlite3: ^2.4.0
+  drift: ^2.16.0
   sqlite3_flutter_libs: ^0.5.0
   path_provider: ^2.0.0
   path: ^1.9.0
-  lottie: ^3.1.0
-  flutter_bloc: ^8.1.4
-  icons_plus: ^5.0.0
-  meta: ^1.11.0
-  equatable: ^2.0.5
-  bottom_picker: ^2.6.0
-  http: ^1.2.1
-  intl: ^0.19.0
-  drift: ^2.16.0
 
 dev_dependencies:
   flutter_test:
@@ -32,9 +48,11 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   envied_generator: ^0.5.3
   build_runner: ^2.4.8
+  drift_dev: ^2.16.0
 
 flutter:
   uses-material-design: true
 
   assets:
+    - assets/destinations.db
     - assets/lottie/

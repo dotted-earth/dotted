@@ -1,6 +1,7 @@
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:bottom_picker/resources/arrays.dart';
 import 'package:dotted/features/itinerary/presentation/widgets/itinerary_form.dart';
+import 'package:dotted/utils/constants/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -35,23 +36,73 @@ class DestinationForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextFormField(
-          autofocus: true,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: "Destination",
-          ),
-          onChanged: (value) {
-            textFieldsValue.update('destination', (_) => value,
-                ifAbsent: () => value);
-          },
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return "Please enter a destination";
+        RawAutocomplete(
+          optionsBuilder: (textEditingValue) async {
+            final text = textEditingValue.text;
+            if (text.length > 2) {
+              final destinations = await database.getDestinations(text);
+              return destinations
+                  .map((d) => "${d.city}, ${d.country}, ${d.iso31661_3}")
+                  .toList();
             }
-            return null;
+            return List<String>.empty();
           },
-          initialValue: textFieldsValue['destination'],
+          optionsViewBuilder: (context, onSelected, options) {
+            return Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(0),
+                child: Material(
+                  elevation: 4.0,
+                  child: SizedBox(
+                    height: 200,
+                    width: 300,
+                    child: ListView.builder(
+                        padding: const EdgeInsets.all(8),
+                        itemCount: options.length,
+                        itemBuilder: (context, index) {
+                          final option = options.elementAt(index);
+
+                          return GestureDetector(
+                              onTap: () {
+                                textFieldsValue.update(
+                                    'destination', (_) => option,
+                                    ifAbsent: () => option);
+                                onSelected(option);
+                              },
+                              child: ListTile(
+                                title: Text(option),
+                              ));
+                        }),
+                  ),
+                ),
+              ),
+            );
+          },
+          fieldViewBuilder:
+              (context, textEditingController, focusNode, onFieldSubmitted) {
+            textEditingController.text = textFieldsValue['destination'] ?? '';
+
+            return TextFormField(
+              autofocus: true,
+              focusNode: focusNode,
+              controller: textEditingController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: "Destination",
+              ),
+              onChanged: (value) {
+                textFieldsValue.update('destination', (_) => value,
+                    ifAbsent: () => value);
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Please enter a destination";
+                }
+                return null;
+              },
+            );
+          },
         ),
         formControl,
         Row(
