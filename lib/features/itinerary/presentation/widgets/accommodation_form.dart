@@ -1,4 +1,5 @@
 import 'package:dotted/features/itinerary/presentation/widgets/itinerary_form.dart';
+import 'package:dotted/utils/constants/google_places.dart';
 import 'package:flutter/material.dart';
 
 class AccommodationForm extends StatelessWidget {
@@ -26,9 +27,15 @@ class AccommodationForm extends StatelessWidget {
             border: OutlineInputBorder(),
             labelText: "Place you're staying",
           ),
-          onChanged: (value) {
+          onChanged: (value) async {
             textFieldsValue.update('accommodation', (_) => value,
                 ifAbsent: () => value);
+
+            if (value.length > 2) {
+              final p = await places.findAutocompletePredictions(value,
+                  placeTypesFilter: List.from(['lodging']));
+              print(p);
+            }
           },
           validator: (value) {
             if (value == null || value.isEmpty) {

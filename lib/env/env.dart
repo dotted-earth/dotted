@@ -13,6 +13,6 @@ abstract class Env {
   @EnviedField(varName: "UNSPLASH_ACCESS_KEY")
   static const String unsplashAccessKey = _Env.unsplashAccessKey;
 
-  @EnviedField(varName: "UNSPLASH_SECRET_KEY")
-  static const String unsplashSecretKey = _Env.unsplashSecretKey;
+  @EnviedField(varName: "GOOGLE_PLACES_KEY")
+  static const String googlePlacesKey = _Env.googlePlacesKey;
 }
