@@ -75,12 +75,13 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
       );
 
       await Future.wait([
-        _userRepository.setUserRecreations(user.id, userRecreations),
-        _userRepository.setUserDiets(user.id, userDiets),
-        _userRepository.setUserCuisines(user.id, userCuisines),
-        _userRepository.setUserFoodAllergies(user.id, userFoodAllergies),
-        _userRepository.updateUserProfile(user.id, newUserProfile)
+        _userRepository.createUserRecreations(user.id, userRecreations),
+        _userRepository.createUserDiets(user.id, userDiets),
+        _userRepository.createUserCuisines(user.id, userCuisines),
+        _userRepository.createUserFoodAllergies(user.id, userFoodAllergies),
       ]);
+
+      await _userRepository.updateUserProfile(user.id, newUserProfile);
 
       emit(OnBoardedFinished());
     } catch (err) {

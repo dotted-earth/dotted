@@ -1,6 +1,5 @@
 import 'package:dotted/utils/constants/routes.dart';
-import 'package:dotted/utils/constants/supabase.dart';
-import 'package:dotted/features/auth/view/login_page.dart';
+import 'package:dotted/features/auth/presentation/screens/login_page.dart';
 import 'package:dotted/features/user/bloc/on_boarding_bloc.dart';
 import 'package:dotted/features/user/presentations/screens/on_boarding_page.dart';
 import 'package:dotted/features/user/providers/preferences_provider.dart';
@@ -13,7 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  const App({super.key, required this.initialRoute});
+  final String initialRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +23,7 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      initialRoute:
-          supabase.auth.currentUser == null ? routes.login : routes.home,
+      initialRoute: initialRoute,
       routes: {
         routes.login: (context) => const LoginPage(),
         routes.home: (context) => const HomePage(),

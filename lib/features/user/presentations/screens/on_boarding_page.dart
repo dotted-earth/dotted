@@ -22,6 +22,10 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   @override
   void initState() {
     super.initState();
+    fetchData();
+  }
+
+  void fetchData() {
     context.read<OnBoardingBloc>().add(OnBoardedPreferencesDataRequested());
   }
 
@@ -70,31 +74,31 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
             Navigator.pushNamedAndRemoveUntil(
                 context, routes.home, (_) => false);
           }
+          if (state is OnBoardingFailure) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.error)));
+            fetchData();
+          }
         },
         builder: (context, state) {
-          if (state is OnBoardingFailure) {
-            return Scaffold(
-              body: Center(
-                child: Text(state.error),
-              ),
-            );
-          }
-
-          if (state is OnBoardingLoading ||
-              state is OnBoardingInitial ||
-              state is OnBoardedFinished) {
+          if (state is OnBoardingLoading) {
             return const Scaffold(
                 body: Center(
               child: CircularProgressIndicator(),
             ));
           }
 
-          state as OnBoardingSuccess;
+          List<PreferenceItemModel> recreations = [];
+          List<PreferenceItemModel> diets = [];
+          List<PreferenceItemModel> cuisines = [];
+          List<PreferenceItemModel> foodAllergies = [];
 
-          final recreations = state.recreations;
-          final diets = state.diets;
-          final cuisines = state.cuisines;
-          final foodAllergies = state.foodAllergies;
+          if (state is OnBoardingSuccess) {
+            recreations = state.recreations;
+            diets = state.diets;
+            cuisines = state.cuisines;
+            foodAllergies = state.foodAllergies;
+          }
 
           return OnBoardingPagePresenter(
               onFinish: () {

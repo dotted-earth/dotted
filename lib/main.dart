@@ -1,6 +1,8 @@
 import 'package:dotted/app.dart';
 import 'package:dotted/env/env.dart';
 import 'package:dotted/features/auth/bloc/auth_bloc.dart';
+import 'package:dotted/utils/constants/routes.dart';
+import 'package:dotted/utils/constants/supabase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -13,12 +15,31 @@ void main() async {
     anonKey: Env.supabaseAnon,
   );
 
+  Future<String> getInitialRoute() async {
+    if (supabase.auth.currentUser != null) {
+      final userProfile = await supabase
+          .from("profiles")
+          .select("has_on_boarded")
+          .eq("id", supabase.auth.currentUser!.id)
+          .single();
+      if (userProfile['has_on_boarded']) {
+        return routes.home;
+      } else {
+        return routes.onboarding;
+      }
+    }
+
+    return routes.login;
+  }
+
+  final initialRoute = await getInitialRoute();
+
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => AuthBloc()),
       ],
-      child: const App(),
+      child: App(initialRoute: initialRoute),
     ),
   );
 }

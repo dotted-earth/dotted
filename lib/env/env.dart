@@ -9,4 +9,10 @@ abstract class Env {
 
   @EnviedField(varName: "SUPABASE_ANON")
   static const String supabaseAnon = _Env.supabaseAnon;
+
+  @EnviedField(varName: "UNSPLASH_ACCESS_KEY")
+  static const String unsplashAccessKey = _Env.unsplashAccessKey;
+
+  @EnviedField(varName: "GOOGLE_PLACES_KEY")
+  static const String googlePlacesKey = _Env.googlePlacesKey;
 }
