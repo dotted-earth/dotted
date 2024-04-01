@@ -1,5 +1,6 @@
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:bottom_picker/resources/arrays.dart';
+import 'package:dotted/database.dart';
 import 'package:dotted/features/itinerary/presentation/widgets/itinerary_form.dart';
 import 'package:dotted/utils/constants/database.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,12 +41,9 @@ class DestinationForm extends StatelessWidget {
           optionsBuilder: (textEditingValue) async {
             final text = textEditingValue.text;
             if (text.length > 2) {
-              final destinations = await database.getDestinations(text);
-              return destinations
-                  .map((d) => "${d.city}, ${d.country}, ${d.iso31661_3}")
-                  .toList();
+              return await database.getDestinations(text);
             }
-            return List<String>.empty();
+            return List<Destination>.empty();
           },
           optionsViewBuilder: (context, onSelected, options) {
             return Align(
@@ -62,6 +60,8 @@ class DestinationForm extends StatelessWidget {
                         itemCount: options.length,
                         itemBuilder: (context, index) {
                           final option = options.elementAt(index);
+                          final destination =
+                              "${option.city}, ${option.country}";
 
                           return GestureDetector(
                               onTap: () {
@@ -71,7 +71,7 @@ class DestinationForm extends StatelessWidget {
                                 onSelected(option);
                               },
                               child: ListTile(
-                                title: Text(option),
+                                title: Text(destination),
                               ));
                         }),
                   ),
@@ -81,7 +81,11 @@ class DestinationForm extends StatelessWidget {
           },
           fieldViewBuilder:
               (context, textEditingController, focusNode, onFieldSubmitted) {
-            textEditingController.text = textFieldsValue['destination'] ?? '';
+            if (textFieldsValue['destination'] is Destination) {
+              final Destination destination = textFieldsValue['destination'];
+              textEditingController = TextEditingController(
+                  text: "${destination.city}, ${destination.country}");
+            }
 
             return TextFormField(
               autofocus: true,
@@ -92,14 +96,26 @@ class DestinationForm extends StatelessWidget {
                 labelText: "Destination",
               ),
               onChanged: (value) {
-                textFieldsValue.update('destination', (_) => value,
-                    ifAbsent: () => value);
+                print(value);
+                final newDestination = Destination(
+                    id: 0,
+                    city: value,
+                    country: '',
+                    lat: 0,
+                    lon: 0,
+                    iso31661_2: '',
+                    iso31661_3: '');
+                textFieldsValue.update('destination', (_) => newDestination,
+                    ifAbsent: () => newDestination);
               },
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return "Please enter a destination";
                 }
                 return null;
+              },
+              onFieldSubmitted: (value) {
+                print(">>> $value");
               },
             );
           },

@@ -1,5 +1,6 @@
 import 'package:dotted/common/providers/unsplash_provider.dart';
 import 'package:dotted/common/repositories/unsplash_repository.dart';
+import 'package:dotted/database.dart';
 import 'package:dotted/features/itinerary/models/itinerary_model.dart';
 import 'package:dotted/features/itinerary/models/itinerary_status_enum.dart';
 import 'package:dotted/features/itinerary/presentation/widgets/accommodation_form.dart';
@@ -64,12 +65,14 @@ class _ItineraryFormState extends State<ItineraryForm> {
   void _onGenerateItinerary() async {
     final lengthOfStay = _getLengthOfStay();
 
+    final Destination destination = textFieldsValue['destination'];
+
     final itinerary = ItineraryModel(
       userId: supabase.auth.currentUser!.id,
       startDate: _startDate,
       endDate: _endDate,
       lengthOfStay: lengthOfStay,
-      destination: textFieldsValue['destination'],
+      destination: "${destination.city}, ${destination.country}",
       budget: int.tryParse(textFieldsValue["budget"]) ?? 0,
       itineraryStatus: ItineraryStatusEnum.ai_pending,
     );
