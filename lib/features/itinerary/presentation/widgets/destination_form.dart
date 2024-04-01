@@ -45,6 +45,9 @@ class DestinationForm extends StatelessWidget {
             }
             return List<Destination>.empty();
           },
+          displayStringForOption: (option) {
+            return "${option.city}, ${option.country}";
+          },
           optionsViewBuilder: (context, onSelected, options) {
             return Align(
               alignment: Alignment.topLeft,
@@ -64,15 +67,16 @@ class DestinationForm extends StatelessWidget {
                               "${option.city}, ${option.country}";
 
                           return GestureDetector(
-                              onTap: () {
-                                textFieldsValue.update(
-                                    'destination', (_) => option,
-                                    ifAbsent: () => option);
-                                onSelected(option);
-                              },
-                              child: ListTile(
-                                title: Text(destination),
-                              ));
+                            onTap: () {
+                              textFieldsValue.update(
+                                  'destination', (_) => option,
+                                  ifAbsent: () => option);
+                              onSelected(option);
+                            },
+                            child: ListTile(
+                              title: Text(destination),
+                            ),
+                          );
                         }),
                   ),
                 ),
@@ -96,7 +100,6 @@ class DestinationForm extends StatelessWidget {
                 labelText: "Destination",
               ),
               onChanged: (value) {
-                print(value);
                 final newDestination = Destination(
                     id: 0,
                     city: value,
@@ -105,6 +108,7 @@ class DestinationForm extends StatelessWidget {
                     lon: 0,
                     iso31661_2: '',
                     iso31661_3: '');
+
                 textFieldsValue.update('destination', (_) => newDestination,
                     ifAbsent: () => newDestination);
               },
@@ -113,9 +117,6 @@ class DestinationForm extends StatelessWidget {
                   return "Please enter a destination";
                 }
                 return null;
-              },
-              onFieldSubmitted: (value) {
-                print(">>> $value");
               },
             );
           },

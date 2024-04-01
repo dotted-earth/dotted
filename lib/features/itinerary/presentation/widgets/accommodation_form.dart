@@ -79,7 +79,6 @@ class AccommodationForm extends StatelessWidget {
                         itemCount: options.length,
                         itemBuilder: (context, index) {
                           final option = options.elementAt(index);
-                          print(">>> $option");
 
                           return GestureDetector(
                               onTap: () {
@@ -99,6 +98,11 @@ class AccommodationForm extends StatelessWidget {
           },
           fieldViewBuilder:
               (context, textEditingController, focusNode, onFieldSubmitted) {
+            if (textFieldsValue['accommodation'] != null) {
+              textEditingController =
+                  TextEditingController(text: textFieldsValue['accommodation']);
+            }
+
             return TextFormField(
               controller: textEditingController,
               focusNode: focusNode,
