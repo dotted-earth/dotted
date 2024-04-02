@@ -1,13 +1,16 @@
 import 'package:dotted/features/itinerary/models/itinerary_model.dart';
+import 'package:dotted/features/itinerary/models/itinerary_status_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ItineraryListCard extends StatelessWidget {
-  const ItineraryListCard({
+  ItineraryListCard({
     super.key,
     required this.itinerary,
+    required this.onDelete,
   });
   final ItineraryModel itinerary;
+  VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +30,16 @@ class ItineraryListCard extends StatelessWidget {
                 ? "${DateFormat.yMd().format(itinerary.startDate)} - ${DateFormat.yMd().format(itinerary.endDate)}"
                 : DateFormat.yMd().format(itinerary.startDate),
           ),
-          Text("Destination: ${itinerary.destination}"),
-          Text(itinerary.startDate.isAfter(DateTime.now())
-              ? "Get ready in ${DateFormat.d().format(itinerary.startDate.subtract(Duration(days: DateTime.now().day)))} day!"
-              : "")
+          Text(itinerary.itineraryStatus.name
+              .split('_')
+              .join(" ")
+              .toUpperCase()),
+          itinerary.itineraryStatus.index <= ItineraryStatusEnum.draft.index
+              ? ElevatedButton.icon(
+                  onPressed: onDelete,
+                  icon: const Icon(Icons.delete),
+                  label: const Text("Delete"))
+              : const SizedBox(),
         ],
       ),
     ));

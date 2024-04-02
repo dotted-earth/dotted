@@ -52,7 +52,14 @@ class _UpcomingItinerariesListState extends State<UpcomingItinerariesList> {
             itemCount: upcomingItineraries.length,
             itemBuilder: (context, index) {
               final upcomingItinerary = upcomingItineraries[index];
-              return ItineraryListCard(itinerary: upcomingItinerary);
+              return ItineraryListCard(
+                itinerary: upcomingItinerary,
+                onDelete: () {
+                  context
+                      .read<UpcomingItinerariesBloc>()
+                      .add(DeleteItineraryRequested(upcomingItinerary.id!));
+                },
+              );
             });
       },
     );

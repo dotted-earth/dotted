@@ -44,4 +44,8 @@ class ItinerariesProvider {
         )
         .single();
   }
+
+  PostgrestFilterBuilder<dynamic> deleteItinerary(int itineraryId) {
+    return _supabase.from("itineraries").delete().eq("id", itineraryId);
+  }
 }

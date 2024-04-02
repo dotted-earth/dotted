@@ -14,3 +14,9 @@ final class CreateItineraryRequested extends UpcomingItinerariesEvent {
 
   const CreateItineraryRequested(this.itinerary);
 }
+
+final class DeleteItineraryRequested extends UpcomingItinerariesEvent {
+  final int itineraryId;
+
+  const DeleteItineraryRequested(this.itineraryId);
+}
