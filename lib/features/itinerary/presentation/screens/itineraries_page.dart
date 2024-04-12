@@ -1,5 +1,4 @@
 import 'package:dotted/features/itinerary/models/itinerary_model.dart';
-import 'package:dotted/features/itinerary/presentation/screens/past_itineraries_page.dart';
 import 'package:dotted/features/itinerary/presentation/screens/upcoming_itineraries_page.dart';
 import 'package:dotted/features/itinerary/presentation/widgets/itinerary_form.dart';
 import 'package:flutter/material.dart';
@@ -11,52 +10,56 @@ class ItinerariesPage extends StatefulWidget {
   State<ItinerariesPage> createState() => _ItinerariesPageState();
 }
 
-class _ItinerariesPageState extends State<ItinerariesPage>
-    with TickerProviderStateMixin {
-  late final TabController _tabController;
+class _ItinerariesPageState extends State<ItinerariesPage> {
   GlobalKey upcomingItinerariesKey = GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Itineraries"),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const <Widget>[
-            Tab(
-              text: "Upcoming",
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: ListView(
+          children: [
+            Row(
+              children: [
+                Text("Upcoming Trips",
+                    style: Theme.of(context).textTheme.titleLarge),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('View All'),
+                ),
+              ],
             ),
-            Tab(
-              text: "Past",
+            const SizedBox(
+              height: 10,
+            ),
+            UpcomingItinerariesPage(key: upcomingItinerariesKey),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Text("Past Trips",
+                    style: Theme.of(context).textTheme.titleLarge),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('View All'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Text("Drafts", style: Theme.of(context).textTheme.titleLarge),
+              ],
             ),
           ],
         ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                UpcomingItinerariesPage(key: upcomingItinerariesKey),
-                const PastItinerariesPage(),
-              ],
-            ),
-          ),
-        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {

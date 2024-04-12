@@ -15,6 +15,7 @@ class UpcomingItinerariesList extends StatefulWidget {
 }
 
 class _UpcomingItinerariesListState extends State<UpcomingItinerariesList> {
+  double boxHeight = 256;
   @override
   void initState() {
     super.initState();
@@ -33,8 +34,11 @@ class _UpcomingItinerariesListState extends State<UpcomingItinerariesList> {
       builder: (context, state) {
         List<ItineraryModel> upcomingItineraries = [];
         if (state is UpcomingItinerariesLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return SizedBox(
+            height: boxHeight,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }
 
@@ -43,24 +47,31 @@ class _UpcomingItinerariesListState extends State<UpcomingItinerariesList> {
         }
 
         if (upcomingItineraries.isEmpty) {
-          return const Center(
-            child: Text("Nothing is here"),
+          return SizedBox(
+            height: boxHeight,
+            child: const Center(
+              child: Text("Nothing is here"),
+            ),
           );
         }
 
-        return ListView.builder(
-            itemCount: upcomingItineraries.length,
-            itemBuilder: (context, index) {
-              final upcomingItinerary = upcomingItineraries[index];
-              return ItineraryListCard(
-                itinerary: upcomingItinerary,
-                onDelete: () {
-                  context
-                      .read<UpcomingItinerariesBloc>()
-                      .add(DeleteItineraryRequested(upcomingItinerary.id!));
-                },
-              );
-            });
+        return SizedBox(
+          height: boxHeight,
+          child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: upcomingItineraries.length,
+              itemBuilder: (context, index) {
+                final upcomingItinerary = upcomingItineraries[index];
+                return ItineraryListCard(
+                  itinerary: upcomingItinerary,
+                  onDelete: () {
+                    context
+                        .read<UpcomingItinerariesBloc>()
+                        .add(DeleteItineraryRequested(upcomingItinerary.id!));
+                  },
+                );
+              }),
+        );
       },
     );
   }

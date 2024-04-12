@@ -30,15 +30,21 @@ class App extends StatelessWidget {
         routes.onboarding: (context) => MultiRepositoryProvider(
               providers: [
                 RepositoryProvider<PreferencesRepository>(
-                    create: (context) =>
-                        PreferencesRepository(PreferencesProvider())),
+                  create: (context) => PreferencesRepository(
+                    PreferencesProvider(),
+                  ),
+                ),
                 RepositoryProvider<UserRepository>(
-                    create: (context) => UserRepository(UserProvider()))
+                  create: (context) => UserRepository(
+                    UserProvider(),
+                  ),
+                )
               ],
               child: BlocProvider(
                 create: (context) => OnBoardingBloc(
-                    context.read<PreferencesRepository>(),
-                    context.read<UserRepository>()),
+                  context.read<PreferencesRepository>(),
+                  context.read<UserRepository>(),
+                ),
                 child: const OnBoardingPage(),
               ),
             ),
