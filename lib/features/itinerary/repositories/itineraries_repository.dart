@@ -46,4 +46,13 @@ class ItinerariesRepository {
       throw err.toString();
     }
   }
+
+  Future<Null> deleteItinerary(int itineraryId) async {
+    try {
+      final data = await _itinerariesProvider.deleteItinerary(itineraryId);
+      return data;
+    } catch (err) {
+      throw err.toString();
+    }
+  }
 }

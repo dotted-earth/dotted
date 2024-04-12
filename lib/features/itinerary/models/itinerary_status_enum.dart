@@ -5,5 +5,10 @@ enum ItineraryStatusEnum {
   finalized,
   canceled,
   in_progress,
-  completed
+  completed;
+
+  bool operator >(ItineraryStatusEnum other) => index > other.index;
+  bool operator <(ItineraryStatusEnum other) => index < other.index;
+  bool operator >=(ItineraryStatusEnum other) => index >= other.index;
+  bool operator <=(ItineraryStatusEnum other) => index <= other.index;
 }
