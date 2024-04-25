@@ -1,5 +1,6 @@
 import 'package:dotted/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -35,8 +36,11 @@ class LoginPage extends StatelessWidget {
                   "Dotted",
                   style: TextStyle(fontSize: 48),
                 ),
-                Lottie.asset(
-                  "assets/lottie/circle_and_arcs.json",
+                Transform.scale(
+                  scale: 1.5,
+                  child: Lottie.asset(
+                    "assets/lottie/circle_and_arcs.json",
+                  ),
                 ),
                 const SizedBox(
                   height: 12,
@@ -51,6 +55,18 @@ class LoginPage extends StatelessWidget {
                   icon: isLoading
                       ? const CircularProgressIndicator.adaptive()
                       : Brand(Brands.google),
+                ),
+                SizedBox(height: 12),
+                ElevatedButton.icon(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          loginBloc.add(const AuthLoginWithAppleRequested());
+                        },
+                  label: const Text("Sign-in with Apple"),
+                  icon: isLoading
+                      ? const CircularProgressIndicator.adaptive()
+                      : Brand(Brands.apple_logo),
                 ),
               ],
             ),
