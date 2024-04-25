@@ -1,6 +1,6 @@
 import 'package:dotted/app.dart';
 import 'package:dotted/env/env.dart';
-import 'package:dotted/features/auth/bloc/auth_bloc.dart';
+import 'package:dotted/bloc/auth/auth_bloc.dart';
 import 'package:dotted/utils/constants/routes.dart';
 import 'package:dotted/utils/constants/supabase.dart';
 import 'package:flutter/material.dart';
