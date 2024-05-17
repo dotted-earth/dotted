@@ -57,10 +57,11 @@ class AccommodationForm extends StatelessWidget {
                 body: jsonEncode(postBody));
 
             final data = jsonDecode(res.body);
-            final places = data['suggestions'].map((suggestion) {
-              return suggestion["placePrediction"]['structuredFormat']
-                  ['mainText']["text"];
-            });
+            final places = data['suggestions']?.map((suggestion) {
+                  return suggestion["placePrediction"]['structuredFormat']
+                      ['mainText']["text"];
+                }) ??
+                [];
 
             return List.from(places.toList());
           },
