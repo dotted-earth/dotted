@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dotted/database.dart';
-import 'package:dotted/env/env.dart';
+import 'package:dotted/utils/constants/env.dart';
 import 'package:dotted/widgets/itinerary_form.dart';
 import 'package:dotted/utils/constants/http_client.dart';
 import 'package:flutter/material.dart';

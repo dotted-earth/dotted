@@ -43,6 +43,7 @@ app.*.map.json
 /android/app/release
 
 # env files
-.env.prod
+.env
 .env.dev
+.env.prod
 env.g.dart

@@ -4,7 +4,13 @@
 
 1. Download Flutter SDK
 2. Clone repository
-3. Modify `.env.dev` file and add environment variables
+3. Modify `.env` file and add environment variables
 4. Create Google Cloud account and [create maps api key](https://console.cloud.google.com/google/maps-apis/)
-5. Run `dart run build_runner build -d` to generate `env.g.dart`
-6. Start developing! Happy coding 🍻
+5. Start developing! Happy coding 🍻
+
+## Google Maps Setup
+
+1. Get Maps API KEY
+2. In Google Cloud, enable both Maps SDK for Android and Maps SDK for iOS under "APIs & Services"
+3. ![Restrict your API keys]("/assets/images/restrict_google_api_key.png")
+4. Go to [android/app/src/main/AndroidManifest.xml](android/app/src/main/AndroidManifest.xml) and add your api key

@@ -1,4 +1,4 @@
-import 'package:dotted/env/env.dart';
+import 'package:dotted/utils/constants/env.dart';
 import 'package:http/http.dart' as http;
 
 final client = http.Client();
