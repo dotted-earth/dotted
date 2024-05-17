@@ -13,4 +13,3 @@
 1. Get Maps API KEY
 2. In Google Cloud, enable both Maps SDK for Android and Maps SDK for iOS under "APIs & Services"
 3. ![Restrict your API keys]("/assets/images/restrict_google_api_key.png")
-4. Go to [android/app/src/main/AndroidManifest.xml](android/app/src/main/AndroidManifest.xml) and add your api key

@@ -16,9 +16,6 @@ dependencies:
   # Database
   supabase_flutter: ^2.3.4
 
-  # Env Var Manager
-  envied: ^0.5.3
-
   # State Management
   flutter_bloc: ^8.1.4
 
