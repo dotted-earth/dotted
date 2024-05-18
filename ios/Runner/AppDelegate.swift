@@ -9,8 +9,8 @@ import flutter_config
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GMSServices.provideAPIKey(flutter_config.FlutterConfigPlugin.env(for: "GOOGLE_PLACES_KEY"))
     GeneratedPluginRegistrant.register(with: self)
+    GMSServices.provideAPIKey(flutter_config.FlutterConfigPlugin.env(for: "GOOGLE_PLACES_KEY"))
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

@@ -8,7 +8,6 @@ import 'package:dotted/repositories/preferences_repository.dart';
 import 'package:dotted/repositories/user_repository.dart';
 import 'package:dotted/screens/home_page.dart';
 import 'package:dotted/utils/theme/theme.dart';
-import 'package:dotted/widgets/google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

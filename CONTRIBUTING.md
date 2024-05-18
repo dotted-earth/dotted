@@ -12,4 +12,8 @@
 
 1. Get Maps API KEY
 2. In Google Cloud, enable both Maps SDK for Android and Maps SDK for iOS under "APIs & Services"
-3. ![Restrict your API keys]("/assets/images/restrict_google_api_key.png")
+3. ![Restrict your API keys]("/assets/images/docs/restrict_google_api_key.png")
+4. Enable Background Mode and Location in XCode
+   - Open Xcode > Runner > Signing & Capabilities
+   - ![Turn on Background Modes and Location updates]("/assets/images/docs/xcode-background-modes-location-updates.png")
+   - While Simulator is open, in the top menu, click Features > Location > Select a location
