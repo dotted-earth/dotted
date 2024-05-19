@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import "package:location/location.dart";
 
@@ -38,9 +40,12 @@ class DevicesUtils {
     return await location.getLocation();
   }
 
-  static Future<void> subscribeToLocationUpdates(Function(LocationData) onData,
-      Function? onError, void Function()? onDone, bool? cancelOnError) async {
-    location.onLocationChanged.listen(onData,
+  static StreamSubscription<LocationData> subscribeToLocationUpdates(
+      Function(LocationData) onData,
+      Function? onError,
+      void Function()? onDone,
+      bool? cancelOnError) {
+    return location.onLocationChanged.listen(onData,
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 }

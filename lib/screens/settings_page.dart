@@ -1,4 +1,5 @@
 import 'package:dotted/bloc/auth/auth_bloc.dart';
+import 'package:dotted/utils/constants/supabase.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted/utils/constants/routes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,63 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   List<bool> switchesOn = [false, false];
+
+  void _onDeleteAccount() async {
+    final bool isDelete = await showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: const EdgeInsets.all(24),
+            height: 200,
+            width: double.maxFinite,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                    "This action will delete your account and data. This action is irreversible."),
+                const SizedBox(
+                  height: 16,
+                ),
+                const Text("Are you sure you want to delete your account?"),
+                const SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        child: const Text("Cancel")),
+                    const SizedBox(
+                      width: 24,
+                    ),
+                    FilledButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        child: const Text("Yes, I'm sure"))
+                  ],
+                )
+              ],
+            ),
+          );
+        });
+
+    if (isDelete) {
+      try {
+        await supabase
+            .from("profiles")
+            .delete()
+            .match({'id': supabase.auth.currentUser!.id});
+        await supabase.rpc("delete_user");
+        context.read<AuthBloc>().add(const AuthLogOutRequested());
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +148,7 @@ class _SettingsPageState extends State<SettingsPage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _onDeleteAccount,
                   child: const Text("Delete Account"),
                 ),
               ],
