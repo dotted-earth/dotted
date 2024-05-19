@@ -1,15 +1,16 @@
 import 'package:dotted/app.dart';
-import 'package:dotted/env/env.dart';
+import 'package:dotted/utils/constants/env.dart';
 import 'package:dotted/bloc/auth/auth_bloc.dart';
 import 'package:dotted/utils/constants/routes.dart';
 import 'package:dotted/utils/constants/supabase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_config/flutter_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await FlutterConfig.loadEnvVariables();
   await Supabase.initialize(
     url: Env.supabaseURL,
     anonKey: Env.supabaseAnon,

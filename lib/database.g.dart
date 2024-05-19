@@ -408,10 +408,203 @@ class DestinationsCompanion extends UpdateCompanion<Destination> {
 
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
+  _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
   late final $DestinationsTable destinations = $DestinationsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [destinations];
+}
+
+typedef $$DestinationsTableInsertCompanionBuilder = DestinationsCompanion
+    Function({
+  Value<int> id,
+  required String city,
+  required String country,
+  required double lat,
+  required double lon,
+  required String iso31661_2,
+  required String iso31661_3,
+  Value<String?> iso31661_num,
+});
+typedef $$DestinationsTableUpdateCompanionBuilder = DestinationsCompanion
+    Function({
+  Value<int> id,
+  Value<String> city,
+  Value<String> country,
+  Value<double> lat,
+  Value<double> lon,
+  Value<String> iso31661_2,
+  Value<String> iso31661_3,
+  Value<String?> iso31661_num,
+});
+
+class $$DestinationsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $DestinationsTable,
+    Destination,
+    $$DestinationsTableFilterComposer,
+    $$DestinationsTableOrderingComposer,
+    $$DestinationsTableProcessedTableManager,
+    $$DestinationsTableInsertCompanionBuilder,
+    $$DestinationsTableUpdateCompanionBuilder> {
+  $$DestinationsTableTableManager(_$AppDatabase db, $DestinationsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$DestinationsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$DestinationsTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$DestinationsTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String> city = const Value.absent(),
+            Value<String> country = const Value.absent(),
+            Value<double> lat = const Value.absent(),
+            Value<double> lon = const Value.absent(),
+            Value<String> iso31661_2 = const Value.absent(),
+            Value<String> iso31661_3 = const Value.absent(),
+            Value<String?> iso31661_num = const Value.absent(),
+          }) =>
+              DestinationsCompanion(
+            id: id,
+            city: city,
+            country: country,
+            lat: lat,
+            lon: lon,
+            iso31661_2: iso31661_2,
+            iso31661_3: iso31661_3,
+            iso31661_num: iso31661_num,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            required String city,
+            required String country,
+            required double lat,
+            required double lon,
+            required String iso31661_2,
+            required String iso31661_3,
+            Value<String?> iso31661_num = const Value.absent(),
+          }) =>
+              DestinationsCompanion.insert(
+            id: id,
+            city: city,
+            country: country,
+            lat: lat,
+            lon: lon,
+            iso31661_2: iso31661_2,
+            iso31661_3: iso31661_3,
+            iso31661_num: iso31661_num,
+          ),
+        ));
+}
+
+class $$DestinationsTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $DestinationsTable,
+    Destination,
+    $$DestinationsTableFilterComposer,
+    $$DestinationsTableOrderingComposer,
+    $$DestinationsTableProcessedTableManager,
+    $$DestinationsTableInsertCompanionBuilder,
+    $$DestinationsTableUpdateCompanionBuilder> {
+  $$DestinationsTableProcessedTableManager(super.$state);
+}
+
+class $$DestinationsTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $DestinationsTable> {
+  $$DestinationsTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get city => $state.composableBuilder(
+      column: $state.table.city,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get country => $state.composableBuilder(
+      column: $state.table.country,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get lat => $state.composableBuilder(
+      column: $state.table.lat,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get lon => $state.composableBuilder(
+      column: $state.table.lon,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get iso31661_2 => $state.composableBuilder(
+      column: $state.table.iso31661_2,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get iso31661_3 => $state.composableBuilder(
+      column: $state.table.iso31661_3,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get iso31661_num => $state.composableBuilder(
+      column: $state.table.iso31661_num,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$DestinationsTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $DestinationsTable> {
+  $$DestinationsTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get city => $state.composableBuilder(
+      column: $state.table.city,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get country => $state.composableBuilder(
+      column: $state.table.country,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get lat => $state.composableBuilder(
+      column: $state.table.lat,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get lon => $state.composableBuilder(
+      column: $state.table.lon,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get iso31661_2 => $state.composableBuilder(
+      column: $state.table.iso31661_2,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get iso31661_3 => $state.composableBuilder(
+      column: $state.table.iso31661_3,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get iso31661_num => $state.composableBuilder(
+      column: $state.table.iso31661_num,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+class _$AppDatabaseManager {
+  final _$AppDatabase _db;
+  _$AppDatabaseManager(this._db);
+  $$DestinationsTableTableManager get destinations =>
+      $$DestinationsTableTableManager(_db, _db.destinations);
 }

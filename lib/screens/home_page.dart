@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dotted/screens/dashboard_page.dart';
 import 'package:dotted/screens/itineraries_page.dart';
 import 'package:dotted/screens/profile_page.dart';
 import 'package:dotted/screens/settings_page.dart';
@@ -14,10 +13,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   static const List<Destination> allDestinations = <Destination>[
-    Destination(0, 'Home', Icons.home, DashboardPage()),
-    Destination(1, 'Itineraries', Icons.airplane_ticket, ItinerariesPage()),
-    Destination(2, 'Profile', Icons.person, ProfilePage()),
-    Destination(3, 'Settings', Icons.settings, SettingsPage()),
+    Destination(0, 'Itineraries', Icons.airplane_ticket, ItinerariesPage()),
+    Destination(1, 'Profile', Icons.person, ProfilePage()),
+    Destination(2, 'Settings', Icons.settings, SettingsPage()),
   ];
   late final List<GlobalKey<NavigatorState>> navigatorKeys;
   late final List<Widget> destinationViews;

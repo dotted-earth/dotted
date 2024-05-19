@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import "package:location/location.dart";
+
+final location = new Location();
 
 class DevicesUtils {
   DevicesUtils._();
@@ -29,5 +32,15 @@ class DevicesUtils {
 
   static double getDevicePixelRatio(BuildContext context) {
     return MediaQuery.of(context).devicePixelRatio;
+  }
+
+  static Future<LocationData> getLocation() async {
+    return await location.getLocation();
+  }
+
+  static Future<void> subscribeToLocationUpdates(Function(LocationData) onData,
+      Function? onError, void Function()? onDone, bool? cancelOnError) async {
+    location.onLocationChanged.listen(onData,
+        onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 }
