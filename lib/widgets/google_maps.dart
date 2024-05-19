@@ -6,14 +6,14 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_config/flutter_config.dart';
 
-class MapSample extends StatefulWidget {
-  const MapSample({super.key});
+class GoogleMaps extends StatefulWidget {
+  const GoogleMaps({super.key});
 
   @override
-  State<MapSample> createState() => MapSampleState();
+  State<GoogleMaps> createState() => GoogleMapsState();
 }
 
-class MapSampleState extends State<MapSample> {
+class GoogleMapsState extends State<GoogleMaps> {
   @override
   initState() {
     super.initState();
@@ -22,14 +22,7 @@ class MapSampleState extends State<MapSample> {
       if (location.latitude == null || location.longitude == null) return;
 
       setState(() {
-        _currentPosition = Marker(
-          markerId: MarkerId('currentPosition'),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-          flat: true,
-          draggable: false,
-          position: LatLng(location.latitude!, location.longitude!),
-        );
+        _currentPosition = LatLng(location.latitude!, location.longitude!);
       });
       await fetchLocationUpdates();
       final polylines = await fetchPolylinePoints();
@@ -47,7 +40,7 @@ class MapSampleState extends State<MapSample> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  Marker _currentPosition = Marker(markerId: MarkerId("currentPosition"));
+  LatLng? _currentPosition;
   Map<PolylineId, Polyline> polylines = {};
 
   Future<void> fetchLocationUpdates() async {
@@ -63,25 +56,18 @@ class MapSampleState extends State<MapSample> {
         ),
       );
       setState(() {
-        _currentPosition = Marker(
-          markerId: MarkerId("currentPosition"),
-          icon:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-          flat: true,
-          draggable: false,
-          position: LatLng(data.latitude!, data.longitude!),
-        );
+        _currentPosition = LatLng(data.latitude!, data.longitude!);
       });
     }, null, null, null);
   }
 
   Future<List<LatLng>> fetchPolylinePoints() async {
+    if (_currentPosition == null) return [];
     final polylinePoints = PolylinePoints();
-    final position = _currentPosition.position;
 
     final result = await polylinePoints.getRouteBetweenCoordinates(
         FlutterConfig.get('GOOGLE_PLACES_KEY'),
-        PointLatLng(position.latitude, position.longitude),
+        PointLatLng(_currentPosition!.latitude, _currentPosition!.longitude),
         PointLatLng(_googlePlex.latitude, _googlePlex.longitude));
 
     if (result.points.isEmpty) return [];
@@ -109,21 +95,20 @@ class MapSampleState extends State<MapSample> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: _origin,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
-        markers: Set<Marker>.from([_currentPosition]),
-        polylines: Set<Polyline>.of(polylines.values),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: fetchLocationUpdates,
-        label: const Text('Get Location'),
-        icon: const Icon(Icons.gps_fixed),
-      ),
+    if (_currentPosition == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    return GoogleMap(
+      mapType: MapType.normal,
+      initialCameraPosition: _origin,
+      onMapCreated: (GoogleMapController controller) {
+        _controller.complete(controller);
+      },
+      polylines: Set<Polyline>.of(polylines.values),
+      myLocationButtonEnabled: false,
+      myLocationEnabled: true,
     );
   }
 }

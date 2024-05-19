@@ -1,4 +1,3 @@
-import 'package:dotted/widgets/google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted/screens/itineraries_page.dart';
 import 'package:dotted/screens/profile_page.dart';
@@ -17,7 +16,6 @@ class _HomePageState extends State<HomePage> {
     Destination(0, 'Itineraries', Icons.airplane_ticket, ItinerariesPage()),
     Destination(1, 'Profile', Icons.person, ProfilePage()),
     Destination(2, 'Settings', Icons.settings, SettingsPage()),
-    Destination(3, "Maps", Icons.map_outlined, MapSample())
   ];
   late final List<GlobalKey<NavigatorState>> navigatorKeys;
   late final List<Widget> destinationViews;

@@ -1,5 +1,6 @@
 import 'package:dotted/models/itinerary_model.dart';
 import 'package:dotted/screens/upcoming_itineraries_page.dart';
+import 'package:dotted/widgets/google_maps.dart';
 import 'package:dotted/widgets/itinerary_form.dart';
 import 'package:flutter/material.dart';
 
@@ -41,23 +42,28 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
             const SizedBox(
               height: 20,
             ),
-            Row(
-              children: [
-                Text("Past Trips",
-                    style: Theme.of(context).textTheme.titleLarge),
-                const Spacer(),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('View All'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Text("Drafts", style: Theme.of(context).textTheme.titleLarge),
-              ],
-            ),
+            const SizedBox(
+              height: 300,
+              width: double.maxFinite,
+              child: GoogleMaps(),
+            )
+            // Row(
+            //   children: [
+            //     Text("Past Trips",
+            //         style: Theme.of(context).textTheme.titleLarge),
+            //     const Spacer(),
+            //     ElevatedButton(
+            //       onPressed: () {},
+            //       child: const Text('View All'),
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 20),
+            // Row(
+            //   children: [
+            //     Text("Drafts", style: Theme.of(context).textTheme.titleLarge),
+            //   ],
+            // ),
           ],
         ),
       ),
