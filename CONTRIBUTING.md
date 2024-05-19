@@ -11,7 +11,7 @@
 ## Google Maps Setup
 
 1. Get Maps API KEY
-2. In Google Cloud, enable both Maps SDK for Android and Maps SDK for iOS under "APIs & Services"
+2. In Google Cloud, enable "Enable Directions API", "Distance Matrix API", "Maps SDK for Android", and "Maps SDK for iOS" under "APIs & Services"
 3. ![Restrict your API keys]("/assets/images/docs/restrict_google_api_key.png")
 4. Enable Background Mode and Location in XCode
    - Open Xcode > Runner > Signing & Capabilities
