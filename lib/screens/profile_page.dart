@@ -19,6 +19,13 @@ class _ProfilePageState extends State<ProfilePage> {
     fetchUserProfile();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    userNameController.dispose();
+    fullNameController.dispose();
+  }
+
   void fetchUserProfile() async {
     if (supabase.auth.currentUser != null) {
       try {

@@ -19,6 +19,12 @@ class _OnboardingPageState extends State<OnBoardingPagePresenter> {
   int _currentPage = 0;
   final PageController _pageController = PageController(initialPage: 0);
 
+  @override
+  dispose() {
+    super.dispose();
+    _pageController.dispose();
+  }
+
   _onFinish() async {
     widget.onFinish.call();
   }

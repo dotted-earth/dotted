@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_config/flutter_config.dart';
+import 'package:location/location.dart';
 
 class GoogleMaps extends StatefulWidget {
   const GoogleMaps({super.key});
@@ -30,7 +31,19 @@ class GoogleMapsState extends State<GoogleMaps> {
     });
   }
 
+  @override
+  dispose() async {
+    super.dispose();
+    final GoogleMapController controller = await _controller.future;
+    controller.dispose();
+    if (_locationStream != null) {
+      _locationStream!.cancel();
+    }
+  }
+
   static const _googlePlex = LatLng(37.422131, -122.084801);
+
+  late StreamSubscription<LocationData>? _locationStream;
 
   static const CameraPosition _origin = CameraPosition(
     target: LatLng(0, 0),
@@ -46,7 +59,7 @@ class GoogleMapsState extends State<GoogleMaps> {
   Future<void> fetchLocationUpdates() async {
     final GoogleMapController controller = await _controller.future;
 
-    DevicesUtils.subscribeToLocationUpdates((data) async {
+    _locationStream = DevicesUtils.subscribeToLocationUpdates((data) async {
       if (data.longitude == null || data.latitude == null) return;
 
       await controller.animateCamera(
@@ -55,6 +68,7 @@ class GoogleMapsState extends State<GoogleMaps> {
               target: LatLng(data.latitude!, data.longitude!), zoom: 15),
         ),
       );
+
       setState(() {
         _currentPosition = LatLng(data.latitude!, data.longitude!);
       });
