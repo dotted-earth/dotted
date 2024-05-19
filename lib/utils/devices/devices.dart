@@ -38,14 +38,8 @@ class DevicesUtils {
     return await location.getLocation();
   }
 
-  static Future<void> subscribeToLocationUpdates(
-      bool inBackground,
-      Function(LocationData) onData,
-      Function? onError,
-      void Function()? onDone,
-      bool? cancelOnError) async {
-    location.enableBackgroundMode(enable: inBackground);
-
+  static Future<void> subscribeToLocationUpdates(Function(LocationData) onData,
+      Function? onError, void Function()? onDone, bool? cancelOnError) async {
     location.onLocationChanged.listen(onData,
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }

@@ -35,6 +35,7 @@ dependencies:
   sign_in_with_apple: ^6.1.0
   flutter_config: ^2.0.2
   location: ^6.0.2
+  flutter_polyline_points: ^2.0.0
 
   # SQLlite for local storage
   sqlite3: ^2.4.0
