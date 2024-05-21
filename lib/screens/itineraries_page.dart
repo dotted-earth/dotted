@@ -1,8 +1,8 @@
 import 'package:dotted/database.dart';
 import 'package:dotted/screens/upcoming_itineraries_page.dart';
 import 'package:dotted/utils/constants/database.dart';
+import 'package:dotted/widgets/itinerary_form.dart';
 import 'package:flutter/material.dart';
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 
 class ItinerariesPage extends StatefulWidget {
   const ItinerariesPage({super.key});
@@ -13,7 +13,7 @@ class ItinerariesPage extends StatefulWidget {
 
 class _ItinerariesPageState extends State<ItinerariesPage> {
   GlobalKey upcomingItinerariesKey = GlobalKey();
-  final Map<String, dynamic> textFieldsValue = {};
+  Destination? _destination;
 
   @override
   Widget build(BuildContext context) {
@@ -29,135 +29,74 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
             const SizedBox(
               height: 16,
             ),
-            TextFormField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                prefixIcon: const Icon(Icons.search),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "Please enter a destination";
-                }
-                return null;
+            RawAutocomplete(
+              displayStringForOption: (option) =>
+                  '${option.city}, ${option.country}',
+              optionsViewBuilder: (context, onSelected, options) {
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    elevation: 4.0,
+                    child: SizedBox(
+                      height: 200.0,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(8.0),
+                        itemCount: options.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final Destination option = options.elementAt(index);
+                          return GestureDetector(
+                            onTap: () {
+                              onSelected(option);
+                              _destination = option;
+                            },
+                            child: ListTile(
+                              title: Text('${option.city}, ${option.country}'),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
               },
-              onFieldSubmitted: (value) async {
-                if (value.isEmpty) return;
-                final modal1 = await showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    showDragHandle: true,
-                    builder: (context) {
-                      var _dates = [];
+              optionsBuilder: (textEditingValue) async {
+                final text = textEditingValue.text;
+                if (text.length < 2) return List<Destination>.empty();
+                return await database.getDestinations(text);
+              },
+              fieldViewBuilder: (context, textEditingController, focusNode,
+                  onFieldSubmitted) {
+                return TextFormField(
+                  controller: textEditingController,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    prefixIcon: const Icon(Icons.search),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter a destination";
+                    }
+                    return null;
+                  },
+                  onFieldSubmitted: (value) async {
+                    if (value.isEmpty) return;
 
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        width: double.maxFinite,
-                        height: 600,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextField(
-                              controller: TextEditingController(text: value),
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                prefixIcon: const Icon(
-                                  Icons.map,
-                                ),
-                                enabled: false,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.luggage_outlined,
-                                    ),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text("Travelers")
-                                  ],
-                                ),
-                                Container(
-                                  child: Row(
-                                    children: [
-                                      IconButton(
-                                        onPressed: () {},
-                                        icon: const Icon(Icons.add),
-                                        splashRadius: 1,
-                                      ),
-                                      const SizedBox(
-                                        width: 8,
-                                      ),
-                                      const Text("1"),
-                                      const SizedBox(
-                                        width: 8,
-                                      ),
-                                      IconButton(
-                                        onPressed: () {},
-                                        icon: const Icon(Icons.remove),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            CalendarDatePicker2(
-                              config: CalendarDatePicker2Config(
-                                calendarType: CalendarDatePicker2Type.range,
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime(DateTime.now().year + 2),
-                              ),
-                              value: [],
-                              onValueChanged: (dates) {
-                                if (dates.length < 2) return;
-                                _dates = dates;
-                              },
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                IconButton.filled(
-                                  onPressed: () {
-                                    Navigator.of(context).pop(true);
-                                  },
-                                  icon: const Icon(Icons.arrow_forward),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      );
-                    });
+                    final draftItinerary = await showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        showDragHandle: true,
+                        builder: (context) =>
+                            ItineraryForm(destination: _destination!));
 
-                if (modal1 == null) return;
-
-                final modal2 = await showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    showDragHandle: true,
-                    builder: (context) {
-                      return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        width: double.maxFinite,
-                        height: 600,
-                        child: const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [],
-                        ),
-                      );
-                    });
+                    if (draftItinerary == null) return;
+                  },
+                );
               },
             ),
+
             const SizedBox(
               height: 16,
             ),
