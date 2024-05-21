@@ -29,6 +29,8 @@ class _ItineraryFormState extends State<ItineraryForm> {
   late TextEditingController _destinationController;
   late DateTime _startDate;
   late DateTime _endDate;
+  late TimeOfDay _startTime;
+  late TimeOfDay _endTime;
   int _travelers = 1;
 
   @override
@@ -125,7 +127,10 @@ class _ItineraryFormState extends State<ItineraryForm> {
                 value: [],
                 onValueChanged: (dates) {
                   if (dates.length < 2) return;
-                  print(dates);
+                  setState(() {
+                    _startDate = dates[0]!;
+                    _endDate = dates[1]!;
+                  });
                 },
               ),
               RawAutocomplete<String>(

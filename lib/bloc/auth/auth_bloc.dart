@@ -1,31 +1,31 @@
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:dotted/models/user_profile_model.dart';
 import 'package:dotted/utils/constants/routes.dart';
 import 'package:dotted/utils/constants/supabase.dart';
-import 'package:dotted/models/user_profile_model.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:io';
 import "package:crypto/crypto.dart";
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(AuthInitial()) {
+  AuthBloc() : super(AuthInitial(isLoading: false)) {
     on<AuthLoginWithGoogleRequested>(_onAuthWithGoogleRequest);
     on<AuthLoginWithAppleRequested>(_onAuthWithAppleRequest);
     on<AuthLogOutRequested>(_onAuthSignOutRequest);
+    on<AuthLoginFromSession>(_onAuthLoginFromSession);
   }
 
   Future<void> _goToOnboardOrHomepage(
       User user, Emitter<AuthState> emit) async {
-    final userProfile = await supabase
+    var userProfile = await supabase
         .from("profiles")
         .select()
         .eq("id", user.id)
@@ -35,11 +35,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
 
     if (userProfile != null) {
-      if (userProfile.hasOnBoarded) {
-        emit(AuthSuccess(navigateToPage: routes.home));
-      } else {
-        emit(AuthSuccess(navigateToPage: routes.onboarding));
-      }
+      emit(AuthSuccess(
+          user: userProfile,
+          navigateToPage:
+              userProfile.hasOnBoarded ? routes.home : routes.onboarding,
+          isLoading: false));
       return;
     }
 
@@ -50,13 +50,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       fullName: user.userMetadata?['full_name'],
       username: "",
     );
-    await supabase.from("profiles").upsert(newUserProfile.toJson());
-    emit(AuthSuccess(navigateToPage: routes.onboarding));
+    final res = await supabase.from("profiles").upsert(newUserProfile.toJson());
+    userProfile = UserProfileModel.fromMap(res);
+
+    emit(AuthSuccess(
+        user: userProfile,
+        navigateToPage: routes.onboarding,
+        isLoading: false));
   }
 
   Future<void> _onAuthWithGoogleRequest(
       AuthLoginWithGoogleRequested event, Emitter<AuthState> emit) async {
-    emit(AuthLoading(true));
+    emit(AuthLoading(isLoading: true));
 
     const webClientId =
         '351644549750-u10n35gkg77igip6n4dk7r44vcba2s6q.apps.googleusercontent.com';
@@ -94,15 +99,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _goToOnboardOrHomepage(user, emit);
       }
     } on AuthException catch (err) {
-      emit(AuthFailure(err.message));
+      emit(AuthFailure(error: err.message, isLoading: false));
     } catch (err) {
-      emit(AuthFailure(err.toString()));
+      emit(AuthFailure(error: err.toString(), isLoading: false));
     }
   }
 
   Future<void> _onAuthWithAppleRequest(
       AuthLoginWithAppleRequested event, Emitter<AuthState> emit) async {
-    emit(AuthLoading(true));
+    emit(AuthLoading(isLoading: true));
     try {
       if (Platform.isIOS) {
         final rawNonce = supabase.auth.generateRawNonce();
@@ -131,21 +136,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             redirectTo: "earth.dotted.app://login-callback");
       }
     } on AuthException catch (err) {
-      emit(AuthFailure(err.message));
+      emit(AuthFailure(error: err.message, isLoading: false));
     } catch (err) {
-      emit(AuthFailure(err.toString()));
+      emit(AuthFailure(error: err.toString(), isLoading: false));
     }
   }
 
   Future<void> _onAuthSignOutRequest(
       AuthLogOutRequested event, Emitter<AuthState> emit) async {
-    emit(AuthLoading(true));
+    emit(AuthLoading(isLoading: true));
     try {
       await supabase.auth.signOut();
-      emit(AuthInitial());
+      emit(AuthInitial(isLoading: false));
     } catch (err) {
-      emit(AuthFailure(err.toString()));
+      emit(AuthFailure(error: err.toString(), isLoading: false));
     }
-    emit(AuthLoading(false));
+    emit(AuthLoading(isLoading: false));
+  }
+
+  Future<void> _onAuthLoginFromSession(
+      AuthLoginFromSession event, Emitter<AuthState> emit) async {
+    await _goToOnboardOrHomepage(event.user, emit);
   }
 }

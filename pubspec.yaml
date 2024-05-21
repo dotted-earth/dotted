@@ -12,6 +12,7 @@ dependencies:
 
   # OAuth Providers
   google_sign_in: ^6.2.1
+  sign_in_with_apple: ^6.1.0
 
   # Database
   supabase_flutter: ^2.3.4
@@ -22,7 +23,6 @@ dependencies:
   # Widgets
   lottie: ^3.1.0
   icons_plus: ^5.0.0
-  bottom_picker: ^2.6.0
   google_maps_flutter: ^2.6.1
   calendar_date_picker2: ^1.0.2
 
@@ -33,7 +33,6 @@ dependencies:
   http: ^1.2.1
   intl: ^0.19.0
   csv: ^6.0.0
-  sign_in_with_apple: ^6.1.0
   flutter_config: ^2.0.2
   location: ^6.0.2
   flutter_polyline_points: ^2.0.0

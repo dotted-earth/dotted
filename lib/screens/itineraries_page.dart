@@ -76,6 +76,7 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
                     prefixIcon: const Icon(Icons.search),
                   ),
                   validator: (value) {
+                    print(value);
                     if (value == null || value.isEmpty) {
                       return "Please enter a destination";
                     }
