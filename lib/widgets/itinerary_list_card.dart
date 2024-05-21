@@ -26,13 +26,13 @@ class ItineraryListCard extends StatelessWidget {
                     child: Image.network(
                       itinerary.media!.url,
                       width: double.maxFinite,
-                      height: 128,
+                      height: 200,
                       fit: BoxFit.cover,
                     ),
                   )
                 : const SizedBox(
                     width: double.maxFinite,
-                    height: 128,
+                    height: 200,
                   ),
             Padding(
               padding: const EdgeInsets.all(8.0),
