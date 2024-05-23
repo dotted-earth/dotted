@@ -104,10 +104,10 @@ class _ItineraryFormState extends State<ItineraryForm> {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      icon: Icon(Icons.close))
+                      icon: const Icon(Icons.close))
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 8,
               ),
               TextField(
@@ -325,7 +325,7 @@ class _ItineraryFormState extends State<ItineraryForm> {
                   );
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               Row(
@@ -351,7 +351,7 @@ class _ItineraryFormState extends State<ItineraryForm> {
                           hintText: "Check-in"),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 16,
                   ),
                   Expanded(
@@ -377,7 +377,7 @@ class _ItineraryFormState extends State<ItineraryForm> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
               TextFormField(
@@ -391,15 +391,15 @@ class _ItineraryFormState extends State<ItineraryForm> {
                     ),
                     hintText: "Budget"),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 16,
               ),
-              Container(
+              SizedBox(
                 width: double.maxFinite,
                 child: FilledButton.icon(
                   onPressed: _onGenerate,
-                  label: Text("Generate"),
-                  icon: Icon(Icons.auto_awesome),
+                  label: const Text("Generate"),
+                  icon: const Icon(Icons.auto_awesome),
                 ),
               )
             ],

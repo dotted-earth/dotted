@@ -52,6 +52,7 @@ dev_dependencies:
   envied_generator: ^0.5.3
   build_runner: ^2.4.8
   drift_dev: ^2.16.0
+  flutter_launcher_icons: "^0.13.1"
 
 flutter:
   uses-material-design: true
@@ -59,3 +60,10 @@ flutter:
   assets:
     - assets/destinations.db
     - assets/lottie/
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/dotted_earth.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
