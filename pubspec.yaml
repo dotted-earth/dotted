@@ -36,6 +36,7 @@ dependencies:
   flutter_config: ^2.0.2
   location: ^6.0.2
   flutter_polyline_points: ^2.0.0
+  crypto: ^3.0.3
 
   # SQLlite for local storage
   sqlite3: ^2.4.0

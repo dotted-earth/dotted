@@ -16,22 +16,22 @@ class AuthState extends Equatable {
 }
 
 final class AuthInitial extends AuthState {
-  AuthInitial({required super.isLoading});
+  const AuthInitial({required super.isLoading});
 }
 
 final class AuthSuccess extends AuthState {
   final String navigateToPage;
 
-  AuthSuccess(
+  const AuthSuccess(
       {super.user, required this.navigateToPage, required super.isLoading});
 }
 
 final class AuthFailure extends AuthState {
   final String error;
 
-  AuthFailure({required super.isLoading, required this.error});
+  const AuthFailure({required super.isLoading, required this.error});
 }
 
 final class AuthLoading extends AuthState {
-  AuthLoading({required super.isLoading});
+  const AuthLoading({required super.isLoading});
 }

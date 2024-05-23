@@ -12,6 +12,7 @@ import 'package:dotted/providers/itineraries_provider.dart';
 import 'package:dotted/repositories/itineraries_repository.dart';
 import 'package:dotted/utils/constants/supabase.dart';
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 const formControl = SizedBox(height: 24);
 
@@ -27,11 +28,13 @@ class ItineraryForm extends StatefulWidget {
 class _ItineraryFormState extends State<ItineraryForm> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _destinationController;
-  late DateTime _startDate;
-  late DateTime _endDate;
-  late TimeOfDay _startTime;
-  late TimeOfDay _endTime;
-  int _travelers = 1;
+  final TextEditingController _checkInController = TextEditingController();
+  final TextEditingController _checkOutController = TextEditingController();
+  final TextEditingController _budgetController = TextEditingController();
+  String _accommodation = '';
+  int _adults = 1;
+  int _children = 0;
+  List<DateTime?> _dates = [];
 
   @override
   void initState() {
@@ -44,6 +47,43 @@ class _ItineraryFormState extends State<ItineraryForm> {
   void dispose() {
     super.dispose();
     _destinationController.dispose();
+    _checkInController.dispose();
+    _checkOutController.dispose();
+    _budgetController.dispose();
+  }
+
+  Future<void> _onGenerate() async {
+    if (_dates.isEmpty) return;
+    if (_checkInController.text.isEmpty) return;
+    if (_checkOutController.text.isEmpty) return;
+    if (_accommodation.isEmpty) return;
+
+    int lengthOfStay =
+        _dates.length == 1 ? 1 : _dates[1]!.difference(_dates[0]!).inDays + 1;
+
+    final itinerary = ItineraryModel(
+      userId: supabase.auth.currentUser!.id,
+      startDate: _dates[0]!,
+      endDate: _dates.length == 1 ? _dates[0]! : _dates[1]!,
+      lengthOfStay: lengthOfStay,
+      destination: "${widget.destination.city}, ${widget.destination.country}",
+      budget: int.tryParse(_budgetController.text) ?? 0,
+      itineraryStatus: ItineraryStatusEnum.ai_pending,
+    );
+
+    ItinerariesRepository repo = ItinerariesRepository(
+        ItinerariesProvider(), UnsplashRepository(UnsplashProvider()));
+    try {
+      final itin = await repo.createItinerary(itinerary);
+      if (mounted) {
+        Navigator.pop(context, itin);
+      }
+    } catch (err) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(err.toString())));
+      }
+    }
   }
 
   @override
@@ -51,12 +91,25 @@ class _ItineraryFormState extends State<ItineraryForm> {
     return Form(
         key: _formKey,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           width: double.maxFinite,
-          height: 800,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton.filledTonal(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(Icons.close))
+                ],
+              ),
+              SizedBox(
+                height: 8,
+              ),
               TextField(
                 controller: _destinationController,
                 decoration: InputDecoration(
@@ -91,7 +144,7 @@ class _ItineraryFormState extends State<ItineraryForm> {
                       IconButton(
                         onPressed: () {
                           setState(() {
-                            _travelers += 1;
+                            _adults += 1;
                           });
                         },
                         icon: const Icon(Icons.add),
@@ -100,15 +153,61 @@ class _ItineraryFormState extends State<ItineraryForm> {
                       const SizedBox(
                         width: 8,
                       ),
-                      SizedBox(width: 20, child: Text(_travelers.toString())),
+                      SizedBox(width: 20, child: Text(_adults.toString())),
                       const SizedBox(
                         width: 8,
                       ),
                       IconButton(
                         onPressed: () {
-                          if (_travelers > 1) {
+                          if (_adults > 1) {
                             setState(() {
-                              _travelers -= 1;
+                              _adults -= 1;
+                            });
+                          }
+                        },
+                        icon: const Icon(Icons.remove),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(
+                        Icons.child_care_outlined,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text("Children")
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _children += 1;
+                          });
+                        },
+                        icon: const Icon(Icons.add),
+                        splashRadius: 1,
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      SizedBox(width: 20, child: Text(_children.toString())),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          if (_children > 0) {
+                            setState(() {
+                              _children -= 1;
                             });
                           }
                         },
@@ -124,12 +223,10 @@ class _ItineraryFormState extends State<ItineraryForm> {
                   firstDate: DateTime.now(),
                   lastDate: DateTime(DateTime.now().year + 2),
                 ),
-                value: [],
+                value: _dates,
                 onValueChanged: (dates) {
-                  if (dates.length < 2) return;
                   setState(() {
-                    _startDate = dates[0]!;
-                    _endDate = dates[1]!;
+                    _dates = dates;
                   });
                 },
               ),
@@ -190,10 +287,10 @@ class _ItineraryFormState extends State<ItineraryForm> {
 
                                 return GestureDetector(
                                     onTap: () {
-                                      // textFieldsValue.update(
-                                      //     'accommodation', (_) => option,
-                                      //     ifAbsent: () => option);
                                       onSelected(option);
+                                      setState(() {
+                                        _accommodation = option;
+                                      });
                                     },
                                     child: ListTile(
                                       title: Text(option),
@@ -206,29 +303,24 @@ class _ItineraryFormState extends State<ItineraryForm> {
                 },
                 fieldViewBuilder: (context, textEditingController, focusNode,
                     onFieldSubmitted) {
-                  // if (textFieldsValue['accommodation'] != null) {
-                  //   textEditingController =
-                  //       TextEditingController(text: textFieldsValue['accommodation']);
-                  // }
-
                   return TextFormField(
                     controller: textEditingController,
                     focusNode: focusNode,
-                    autofocus: true,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       hintText: "Your accommodation",
                       prefixIcon: Icon(Icons.hotel),
                     ),
-                    // onChanged: (value) async {
-                    //   textFieldsValue.update('accommodation', (_) => value,
-                    //       ifAbsent: () => value);
-                    // },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Please enter where you're staying";
                       }
                       return null;
+                    },
+                    onChanged: (value) {
+                      setState(() {
+                        _accommodation = value;
+                      });
                     },
                   );
                 },
@@ -240,14 +332,23 @@ class _ItineraryFormState extends State<ItineraryForm> {
                 children: [
                   Expanded(
                     child: TextFormField(
+                      controller: _checkInController,
+                      onTap: () async {
+                        final time = await showTimePicker(
+                            context: context, initialTime: TimeOfDay.now());
+                        if (time != null) {
+                          _checkInController.text = time.format(context);
+                        }
+                      },
+                      readOnly: true,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
                           prefixIcon: const Icon(
-                            Icons.start_outlined,
+                            FontAwesome.clock,
                           ),
-                          hintText: "Start time"),
+                          hintText: "Check-in"),
                     ),
                   ),
                   SizedBox(
@@ -255,14 +356,23 @@ class _ItineraryFormState extends State<ItineraryForm> {
                   ),
                   Expanded(
                     child: TextFormField(
+                      controller: _checkOutController,
+                      onTap: () async {
+                        final time = await showTimePicker(
+                            context: context, initialTime: TimeOfDay.now());
+                        if (time != null) {
+                          _checkOutController.text = time.format(context);
+                        }
+                      },
+                      readOnly: true,
                       decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
                           prefixIcon: const Icon(
-                            Icons.timer,
+                            FontAwesome.clock,
                           ),
-                          hintText: "End time"),
+                          hintText: "Check-out"),
                     ),
                   ),
                 ],
@@ -271,6 +381,7 @@ class _ItineraryFormState extends State<ItineraryForm> {
                 height: 16,
               ),
               TextFormField(
+                controller: _budgetController,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(6),
@@ -280,17 +391,17 @@ class _ItineraryFormState extends State<ItineraryForm> {
                     ),
                     hintText: "Budget"),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton.filled(
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                    icon: const Icon(Icons.arrow_forward),
-                  ),
-                ],
+              SizedBox(
+                height: 16,
               ),
+              Container(
+                width: double.maxFinite,
+                child: FilledButton.icon(
+                  onPressed: _onGenerate,
+                  label: Text("Generate"),
+                  icon: Icon(Icons.auto_awesome),
+                ),
+              )
             ],
           ),
         ));

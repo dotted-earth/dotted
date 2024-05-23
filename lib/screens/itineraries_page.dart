@@ -93,6 +93,9 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
                             ItineraryForm(destination: _destination!));
 
                     if (draftItinerary == null) return;
+                    setState(() {
+                      upcomingItinerariesKey = GlobalKey();
+                    });
                   },
                 );
               },
