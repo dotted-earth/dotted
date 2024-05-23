@@ -16,3 +16,8 @@ final class AuthLoginWithAppleRequested extends AuthEvent {
 final class AuthLogOutRequested extends AuthEvent {
   const AuthLogOutRequested();
 }
+
+final class AuthLoginFromSession extends AuthEvent {
+  final User user;
+  const AuthLoginFromSession({required this.user});
+}

@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class UserProfileModel {
@@ -7,13 +6,15 @@ class UserProfileModel {
   String? fullName;
   bool isEmailVerified;
   bool hasOnBoarded;
+  String? avatarUrl;
 
   UserProfileModel({
     required this.id,
-    this.username,
-    this.fullName,
     required this.isEmailVerified,
     required this.hasOnBoarded,
+    this.username,
+    this.fullName,
+    this.avatarUrl,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,17 +24,18 @@ class UserProfileModel {
       'full_name': fullName,
       'is_email_verified': isEmailVerified,
       'has_on_boarded': hasOnBoarded,
+      'avatar_url': avatarUrl
     };
   }
 
   factory UserProfileModel.fromMap(Map<String, dynamic> map) {
     return UserProfileModel(
-      id: map['id'] as String,
-      username: map['username'] != null ? map['username'] as String : null,
-      fullName: map['full_name'] != null ? map['full_name'] as String : null,
-      isEmailVerified: map['is_email_verified'] as bool,
-      hasOnBoarded: map['has_on_boarded'] as bool,
-    );
+        id: map['id'] as String,
+        username: map['username'] != null ? map['username'] as String : null,
+        fullName: map['full_name'] != null ? map['full_name'] as String : null,
+        isEmailVerified: map['is_email_verified'] as bool,
+        hasOnBoarded: map['has_on_boarded'] as bool,
+        avatarUrl: map['avatar_url'] as String);
   }
 
   String toJson() => json.encode(toMap());

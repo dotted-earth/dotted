@@ -1,8 +1,10 @@
+import 'package:dotted/bloc/auth/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted/screens/itineraries_page.dart';
 import 'package:dotted/screens/profile_page.dart';
 import 'package:dotted/screens/settings_page.dart';
 import 'package:dotted/widgets/bottom_nav_bar.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -54,6 +56,44 @@ class _HomePageState extends State<HomePage> {
         navigator.pop();
       },
       child: Scaffold(
+        appBar: AppBar(
+          leadingWidth: 200,
+          automaticallyImplyLeading: false,
+          leading: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state.user == null) return Text("no here");
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.blue.shade200,
+                      radius: 28,
+                      child: Center(
+                        child: CircleAvatar(
+                          backgroundImage: state.user!.avatarUrl!.isNotEmpty
+                              ? NetworkImage(state.user!.avatarUrl!)
+                              : null,
+                          radius: 27,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    if (state.user!.fullName != null) ...[
+                      Text(state.user!.fullName!)
+                    ] else if (state.user!.username != null) ...[
+                      Text(state.user!.username!)
+                    ]
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
         body: SafeArea(
           child: Stack(
             fit: StackFit.expand,

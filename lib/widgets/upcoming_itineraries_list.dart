@@ -15,7 +15,7 @@ class UpcomingItinerariesList extends StatefulWidget {
 }
 
 class _UpcomingItinerariesListState extends State<UpcomingItinerariesList> {
-  double boxHeight = 256;
+  double boxHeight = 340;
   @override
   void initState() {
     super.initState();

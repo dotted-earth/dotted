@@ -1,3 +1,4 @@
+import 'package:dotted/bloc/auth/auth_bloc.dart';
 import 'package:dotted/utils/constants/routes.dart';
 import 'package:dotted/screens/login_page.dart';
 import 'package:dotted/bloc/on_boarding/on_boarding_bloc.dart';
@@ -7,13 +8,34 @@ import 'package:dotted/providers/user_provider.dart';
 import 'package:dotted/repositories/preferences_repository.dart';
 import 'package:dotted/repositories/user_repository.dart';
 import 'package:dotted/screens/home_page.dart';
+import 'package:dotted/utils/constants/supabase.dart';
 import 'package:dotted/utils/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key, required this.initialRoute});
   final String initialRoute;
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
+  void initState() {
+    super.initState();
+
+    supabase.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+      if (event == AuthChangeEvent.initialSession && data.session != null) {
+        context
+            .read<AuthBloc>()
+            .add(AuthLoginFromSession(user: data.session!.user));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +45,7 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.system,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      initialRoute: initialRoute,
+      initialRoute: widget.initialRoute,
       routes: {
         routes.login: (context) => const LoginPage(),
         routes.home: (context) => const HomePage(),

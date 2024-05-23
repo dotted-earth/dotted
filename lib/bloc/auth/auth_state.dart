@@ -1,27 +1,37 @@
 part of 'auth_bloc.dart';
 
-@immutable
-sealed class AuthState extends Equatable {
+class AuthState extends Equatable {
+  final UserProfileModel? user;
+  final bool isLoading;
+
+  const AuthState({this.user, required this.isLoading});
+
+  AuthState copyWith(UserProfileModel? user, bool? isLoading) {
+    return AuthState(
+        user: user ?? this.user, isLoading: isLoading ?? this.isLoading);
+  }
+
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [user, isLoading];
 }
 
-final class AuthInitial extends AuthState {}
+final class AuthInitial extends AuthState {
+  const AuthInitial({required super.isLoading});
+}
 
 final class AuthSuccess extends AuthState {
   final String navigateToPage;
 
-  AuthSuccess({required this.navigateToPage});
+  const AuthSuccess(
+      {super.user, required this.navigateToPage, required super.isLoading});
 }
 
 final class AuthFailure extends AuthState {
   final String error;
 
-  AuthFailure(this.error);
+  const AuthFailure({required super.isLoading, required this.error});
 }
 
 final class AuthLoading extends AuthState {
-  final bool isLoading;
-
-  AuthLoading(this.isLoading);
+  const AuthLoading({required super.isLoading});
 }

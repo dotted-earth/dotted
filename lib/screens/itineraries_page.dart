@@ -1,6 +1,6 @@
-import 'package:dotted/models/itinerary_model.dart';
+import 'package:dotted/database.dart';
 import 'package:dotted/screens/upcoming_itineraries_page.dart';
-import 'package:dotted/widgets/google_maps.dart';
+import 'package:dotted/utils/constants/database.dart';
 import 'package:dotted/widgets/itinerary_form.dart';
 import 'package:flutter/material.dart';
 
@@ -13,27 +13,100 @@ class ItinerariesPage extends StatefulWidget {
 
 class _ItinerariesPageState extends State<ItinerariesPage> {
   GlobalKey upcomingItinerariesKey = GlobalKey();
+  Destination? _destination;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Itineraries"),
-      ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: const EdgeInsets.only(top: 24.0, left: 12, right: 12),
         child: ListView(
           children: [
-            Row(
-              children: [
-                Text("Upcoming Trips",
-                    style: Theme.of(context).textTheme.titleLarge),
-                const Spacer(),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('View All'),
-                ),
-              ],
+            const Text(
+              "Where would you like to go?",
+              style: TextStyle(fontSize: 24),
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            RawAutocomplete(
+              displayStringForOption: (option) =>
+                  '${option.city}, ${option.country}',
+              optionsViewBuilder: (context, onSelected, options) {
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    elevation: 4.0,
+                    child: SizedBox(
+                      height: 200.0,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(8.0),
+                        itemCount: options.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final Destination option = options.elementAt(index);
+                          return GestureDetector(
+                            onTap: () {
+                              onSelected(option);
+                              _destination = option;
+                            },
+                            child: ListTile(
+                              title: Text('${option.city}, ${option.country}'),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              },
+              optionsBuilder: (textEditingValue) async {
+                final text = textEditingValue.text;
+                if (text.length < 2) return List<Destination>.empty();
+                return await database.getDestinations(text);
+              },
+              fieldViewBuilder: (context, textEditingController, focusNode,
+                  onFieldSubmitted) {
+                return TextFormField(
+                  controller: textEditingController,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    prefixIcon: const Icon(Icons.search),
+                  ),
+                  validator: (value) {
+                    print(value);
+                    if (value == null || value.isEmpty) {
+                      return "Please enter a destination";
+                    }
+                    return null;
+                  },
+                  onFieldSubmitted: (value) async {
+                    if (value.isEmpty) return;
+
+                    final draftItinerary = await showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        showDragHandle: true,
+                        builder: (context) =>
+                            ItineraryForm(destination: _destination!));
+
+                    if (draftItinerary == null) return;
+                    setState(() {
+                      upcomingItinerariesKey = GlobalKey();
+                    });
+                  },
+                );
+              },
+            ),
+
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              "Upcoming Trips",
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(
               height: 10,
@@ -42,70 +115,13 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
             const SizedBox(
               height: 20,
             ),
-            const SizedBox(
-              height: 300,
-              width: double.maxFinite,
-              child: GoogleMaps(),
-            )
-            // Row(
-            //   children: [
-            //     Text("Past Trips",
-            //         style: Theme.of(context).textTheme.titleLarge),
-            //     const Spacer(),
-            //     ElevatedButton(
-            //       onPressed: () {},
-            //       child: const Text('View All'),
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(height: 20),
-            // Row(
-            //   children: [
-            //     Text("Drafts", style: Theme.of(context).textTheme.titleLarge),
-            //   ],
-            // ),
+            // const SizedBox(
+            //   height: 300,
+            //   width: double.maxFinite,
+            //   child: GoogleMaps(),
+            // )
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final data = await showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                  height: 800,
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(Icons.close),
-                            padding: const EdgeInsets.all(24),
-                          )
-                        ],
-                      ),
-                      const ItineraryForm()
-                    ],
-                  ),
-                );
-              });
-
-          if (data is ItineraryModel) {
-            setState(() {
-              upcomingItinerariesKey = GlobalKey();
-            });
-          }
-        },
-        elevation: 0,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add),
       ),
     );
   }
