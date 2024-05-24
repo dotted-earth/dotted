@@ -7,5 +7,7 @@ class Env {
 
   static String unsplashAccessKey = FlutterConfig.get('UNSPLASH_ACCESS_KEY');
 
-  static String googlePlacesKey = FlutterConfig.get('GOOGLE_PLACES_KEY');
+  static String googleMapsKey = FlutterConfig.get('GOOGLE_MAPS_KEY');
+
+  static String viatorApiKey = FlutterConfig.get("VIATOR_API_KEY");
 }

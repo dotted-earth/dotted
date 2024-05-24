@@ -83,6 +83,7 @@ class _UpcomingItinerariesConsumerState
         }
 
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               "Upcoming Trips",

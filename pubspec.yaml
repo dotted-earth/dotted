@@ -15,20 +15,20 @@ dependencies:
   sign_in_with_apple: ^6.1.0
 
   # Database
-  supabase_flutter: ^2.3.4
+  supabase_flutter: ^2.5.3
 
   # State Management
-  flutter_bloc: ^8.1.4
+  flutter_bloc: ^8.1.5
 
   # Widgets
-  lottie: ^3.1.0
+  lottie: ^3.1.2
   icons_plus: ^5.0.0
   google_maps_flutter: ^2.6.1
   calendar_date_picker2: ^1.0.2
 
   # Utils
   collection: ^1.18.0
-  meta: ^1.11.0
+  meta: ^1.12.0
   equatable: ^2.0.5
   http: ^1.2.1
   intl: ^0.19.0
@@ -39,10 +39,10 @@ dependencies:
   crypto: ^3.0.3
 
   # SQLlite for local storage
-  sqlite3: ^2.4.0
-  drift: ^2.16.0
-  sqlite3_flutter_libs: ^0.5.0
-  path_provider: ^2.0.0
+  sqlite3: ^2.4.3
+  drift: ^2.18.0
+  sqlite3_flutter_libs: ^0.5.22
+  path_provider: ^2.1.3
   path: ^1.9.0
   flutter_animate: ^4.5.0
 
@@ -50,9 +50,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-  envied_generator: ^0.5.3
-  build_runner: ^2.4.8
-  drift_dev: ^2.16.0
+  drift_dev: ^2.18.0
   flutter_launcher_icons: "^0.13.1"
 
 flutter:

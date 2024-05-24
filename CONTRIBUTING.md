@@ -17,3 +17,7 @@
    - Open Xcode > Runner > Signing & Capabilities
    - ![Turn on Background Modes and Location updates]("/assets/images/docs/xcode-background-modes-location-updates.png")
    - While Simulator is open, in the top menu, click Features > Location > Select a location
+
+## Get Viator API key
+
+- Goto [Viator Partners](https://partnerresources.viator.com/travel-commerce/affiliate/basic-access/golden-path/?source=specs) and follow guide
