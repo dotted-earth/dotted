@@ -1,24 +1,49 @@
 part of 'upcoming_itineraries_bloc.dart';
 
-sealed class UpcomingItinerariesState extends Equatable {
-  const UpcomingItinerariesState();
+@immutable
+class UpcomingItinerariesState extends Equatable {
+  final bool isLoading;
+  final List<ItineraryModel> upcomingItineraries;
+
+  const UpcomingItinerariesState(
+      {required this.upcomingItineraries, required this.isLoading});
+
+  UpcomingItinerariesState copyWith(
+      List<ItineraryModel>? upcomingItineraries, bool? isLoading) {
+    return UpcomingItinerariesState(
+      upcomingItineraries: upcomingItineraries ?? this.upcomingItineraries,
+      isLoading: isLoading ?? this.isLoading,
+    );
+  }
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [upcomingItineraries, isLoading];
 }
 
-final class UpcomingItinerariesInitial extends UpcomingItinerariesState {}
+class UpcomingItinerariesInitial extends UpcomingItinerariesState {
+  const UpcomingItinerariesInitial(
+      {required super.upcomingItineraries, required super.isLoading})
+      : super();
+}
 
-final class UpcomingItinerariesLoading extends UpcomingItinerariesState {}
+class UpcomingItinerariesLoading extends UpcomingItinerariesState {
+  const UpcomingItinerariesLoading(
+      {required super.upcomingItineraries, required super.isLoading})
+      : super();
+}
 
-final class UpcomingItinerariesFailure extends UpcomingItinerariesState {
+class UpcomingItinerariesFailure extends UpcomingItinerariesState {
   final String error;
 
-  const UpcomingItinerariesFailure(this.error);
+  const UpcomingItinerariesFailure(
+      {required super.upcomingItineraries,
+      required super.isLoading,
+      required this.error})
+      : super();
 }
 
 final class UpcomingItinerariesSuccess extends UpcomingItinerariesState {
-  final List<ItineraryModel> upcomingItineraries;
-
-  const UpcomingItinerariesSuccess(this.upcomingItineraries);
+  const UpcomingItinerariesSuccess(
+      {required super.upcomingItineraries, required super.isLoading})
+      : super();
 }

@@ -1,5 +1,5 @@
 import 'package:dotted/database.dart';
-import 'package:dotted/screens/upcoming_itineraries_page.dart';
+import 'package:dotted/widgets/upcoming_itineraries.dart';
 import 'package:dotted/utils/constants/database.dart';
 import 'package:dotted/widgets/itinerary_form.dart';
 import 'package:flutter/material.dart';
@@ -75,13 +75,6 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
                     ),
                     prefixIcon: const Icon(Icons.search),
                   ),
-                  validator: (value) {
-                    print(value);
-                    if (value == null || value.isEmpty) {
-                      return "Please enter a destination";
-                    }
-                    return null;
-                  },
                   onFieldSubmitted: (value) async {
                     if (value.isEmpty) return;
 
@@ -104,14 +97,7 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
             const SizedBox(
               height: 16,
             ),
-            Text(
-              "Upcoming Trips",
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            UpcomingItinerariesPage(key: upcomingItinerariesKey),
+            UpcomingItineraries(key: upcomingItinerariesKey),
             const SizedBox(
               height: 20,
             ),

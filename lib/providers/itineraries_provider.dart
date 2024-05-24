@@ -20,7 +20,7 @@ class ItinerariesProvider {
         .from("itineraries")
         .select("*, media(*)")
         .eq("user_id", userId)
-        .lt('itinerary_status', ItineraryStatusEnum.canceled.name);
+        .lt("itinerary_status", ItineraryStatusEnum.canceled.name);
   }
 
   PostgrestTransformBuilder<Map<String, dynamic>> createItinerary(

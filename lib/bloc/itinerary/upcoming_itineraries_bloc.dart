@@ -3,6 +3,7 @@ import 'package:dotted/repositories/itineraries_repository.dart';
 import 'package:dotted/utils/constants/supabase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:meta/meta.dart';
 
 part 'upcoming_itineraries_event.dart';
 part 'upcoming_itineraries_state.dart';
@@ -12,7 +13,8 @@ class UpcomingItinerariesBloc
   late ItinerariesRepository _upcomingItinerariesRepository;
 
   UpcomingItinerariesBloc(ItinerariesRepository upcomingItinerariesRepository)
-      : super(UpcomingItinerariesInitial()) {
+      : super(const UpcomingItinerariesInitial(
+            upcomingItineraries: [], isLoading: false)) {
     _upcomingItinerariesRepository = upcomingItinerariesRepository;
     on<UpcomingItinerariesRequested>(_upcomingItinerariesRequest);
     on<CreateItineraryRequested>(_createItineraryRequested);
@@ -21,14 +23,17 @@ class UpcomingItinerariesBloc
 
   void _upcomingItinerariesRequest(UpcomingItinerariesRequested event,
       Emitter<UpcomingItinerariesState> emit) async {
-    emit(UpcomingItinerariesLoading());
-
+    emit(const UpcomingItinerariesLoading(
+        isLoading: true, upcomingItineraries: []));
     try {
       final upcomingItineraries = await _upcomingItinerariesRepository
           .getUpcomingItineraries(supabase.auth.currentUser!.id);
-      emit(UpcomingItinerariesSuccess(upcomingItineraries));
+
+      emit(UpcomingItinerariesSuccess(
+          isLoading: false, upcomingItineraries: upcomingItineraries));
     } catch (err) {
-      emit(UpcomingItinerariesFailure(err.toString()));
+      emit(UpcomingItinerariesFailure(
+          isLoading: false, upcomingItineraries: [], error: err.toString()));
     }
   }
 
@@ -41,16 +46,20 @@ class UpcomingItinerariesBloc
 
   void _deleteItineraryRequested(DeleteItineraryRequested event,
       Emitter<UpcomingItinerariesState> emit) async {
-    emit(UpcomingItinerariesLoading());
+    emit(const UpcomingItinerariesLoading(
+        isLoading: true, upcomingItineraries: []));
 
     try {
       await _upcomingItinerariesRepository.deleteItinerary(event.itineraryId);
 
       final upcomingItineraries = await _upcomingItinerariesRepository
           .getUpcomingItineraries(supabase.auth.currentUser!.id);
-      emit(UpcomingItinerariesSuccess(upcomingItineraries));
+
+      emit(UpcomingItinerariesSuccess(
+          isLoading: false, upcomingItineraries: upcomingItineraries));
     } catch (err) {
-      emit(UpcomingItinerariesFailure(err.toString()));
+      emit(UpcomingItinerariesFailure(
+          isLoading: false, upcomingItineraries: [], error: err.toString()));
     }
   }
 }

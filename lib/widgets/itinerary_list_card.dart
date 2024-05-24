@@ -1,16 +1,18 @@
 import 'package:dotted/models/itinerary_model.dart';
 import 'package:dotted/models/itinerary_status_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 
 class ItineraryListCard extends StatelessWidget {
-  const ItineraryListCard({
-    super.key,
-    required this.itinerary,
-    required this.onDelete,
-  });
+  const ItineraryListCard(
+      {super.key,
+      required this.itinerary,
+      required this.onDelete,
+      required this.index});
   final ItineraryModel itinerary;
   final VoidCallback onDelete;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
@@ -65,11 +67,12 @@ class ItineraryListCard extends StatelessWidget {
                       const Spacer(),
                       itinerary.itineraryStatus.index <=
                               ItineraryStatusEnum.draft.index
-                          ? ElevatedButton.icon(
+                          ? IconButton(
                               onPressed: onDelete,
                               icon: const Icon(Icons.delete),
-                              label: const Text("Delete"))
-                          : const SizedBox(),
+                              tooltip: "Delete",
+                            )
+                          : const SizedBox.shrink(),
                     ],
                   ),
                 ],
@@ -78,6 +81,9 @@ class ItineraryListCard extends StatelessWidget {
           ],
         ),
       ),
-    );
+    )
+        .animate()
+        .fade(delay: (250 * this.index).ms)
+        .moveY(begin: 20, end: 0, duration: 500.ms);
   }
 }
