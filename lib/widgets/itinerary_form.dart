@@ -256,7 +256,7 @@ class _ItineraryFormState extends State<ItineraryForm> {
                           'https://places.googleapis.com/v1/places:autocomplete'),
                       headers: {
                         'Content-Type': "application/json",
-                        'X-Goog-Api-Key': Env.googlePlacesKey,
+                        'X-Goog-Api-Key': Env.googleMapsKey,
                       },
                       body: jsonEncode(postBody));
 

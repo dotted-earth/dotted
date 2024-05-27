@@ -10,7 +10,7 @@ import flutter_config
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
-    GMSServices.provideAPIKey(flutter_config.FlutterConfigPlugin.env(for: "GOOGLE_PLACES_KEY"))
+    GMSServices.provideAPIKey(flutter_config.FlutterConfigPlugin.env(for: "GOOGLE_MAPS_KEY"))
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

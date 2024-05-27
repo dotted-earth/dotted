@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:dotted/utils/constants/env.dart';
 import 'package:dotted/utils/devices/devices.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:flutter_config/flutter_config.dart';
 import 'package:location/location.dart';
 
 class GoogleMaps extends StatefulWidget {
@@ -80,7 +80,7 @@ class GoogleMapsState extends State<GoogleMaps> {
     final polylinePoints = PolylinePoints();
 
     final result = await polylinePoints.getRouteBetweenCoordinates(
-        FlutterConfig.get('GOOGLE_PLACES_KEY'),
+        Env.googleMapsKey,
         PointLatLng(_currentPosition!.latitude, _currentPosition!.longitude),
         PointLatLng(_googlePlex.latitude, _googlePlex.longitude));
 

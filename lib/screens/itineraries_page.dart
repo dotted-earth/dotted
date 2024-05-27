@@ -1,4 +1,6 @@
 import 'package:dotted/database.dart';
+import 'package:dotted/widgets/google_maps.dart';
+import 'package:dotted/widgets/nearby_activities.dart';
 import 'package:dotted/widgets/upcoming_itineraries.dart';
 import 'package:dotted/utils/constants/database.dart';
 import 'package:dotted/widgets/itinerary_form.dart';
@@ -93,7 +95,6 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
                 );
               },
             ),
-
             const SizedBox(
               height: 16,
             ),
@@ -105,7 +106,8 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
             //   height: 300,
             //   width: double.maxFinite,
             //   child: GoogleMaps(),
-            // )
+            // ),
+            NearbyActivities()
           ],
         ),
       ),
