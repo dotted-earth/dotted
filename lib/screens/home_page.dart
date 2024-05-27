@@ -73,9 +73,10 @@ class _HomePageState extends State<HomePage> {
                       radius: 28,
                       child: Center(
                         child: CircleAvatar(
-                          backgroundImage: state.user!.avatarUrl!.isNotEmpty
-                              ? NetworkImage(state.user!.avatarUrl!)
-                              : null,
+                          backgroundImage:
+                              state.user!.avatarUrl?.isNotEmpty ?? false
+                                  ? NetworkImage(state.user!.avatarUrl!)
+                                  : null,
                           radius: 27,
                         ),
                       ),

@@ -1,5 +1,4 @@
 import 'package:dotted/database.dart';
-import 'package:dotted/widgets/google_maps.dart';
 import 'package:dotted/widgets/nearby_activities.dart';
 import 'package:dotted/widgets/upcoming_itineraries.dart';
 import 'package:dotted/utils/constants/database.dart';
@@ -91,6 +90,7 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
                     setState(() {
                       upcomingItinerariesKey = GlobalKey();
                     });
+                    textEditingController.clear();
                   },
                 );
               },

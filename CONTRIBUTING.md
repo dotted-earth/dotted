@@ -21,3 +21,8 @@
 ## Get Viator API key
 
 - Goto [Viator Partners](https://partnerresources.viator.com/travel-commerce/affiliate/basic-access/golden-path/?source=specs) and follow guide
+
+## Server Setup
+
+1. Follow instructions of Dotted-API CONTRIBUTING.md
+2. Set your SUPABASE_URL and SUPABASE_ANON keys from `supabase start`

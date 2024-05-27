@@ -17,7 +17,8 @@ void main() async {
   );
 
   Future<String> getInitialRoute() async {
-    if (supabase.auth.currentUser != null) {
+    if (supabase.auth.currentUser == null) return routes.login;
+    try {
       final userProfile = await supabase
           .from("profiles")
           .select("has_on_boarded")
@@ -28,9 +29,9 @@ void main() async {
       } else {
         return routes.onboarding;
       }
+    } catch (e) {
+      return routes.login;
     }
-
-    return routes.login;
   }
 
   final initialRoute = await getInitialRoute();

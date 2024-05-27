@@ -35,7 +35,8 @@ class UserProfileModel {
         fullName: map['full_name'] != null ? map['full_name'] as String : null,
         isEmailVerified: map['is_email_verified'] as bool,
         hasOnBoarded: map['has_on_boarded'] as bool,
-        avatarUrl: map['avatar_url'] as String);
+        avatarUrl:
+            map['avatar_url'] != null ? map['avatar_url'] as String : null);
   }
 
   String toJson() => json.encode(toMap());
