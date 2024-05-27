@@ -23,12 +23,13 @@ void main() async {
           .from("profiles")
           .select("has_on_boarded")
           .eq("id", supabase.auth.currentUser!.id)
-          .single();
+          .maybeSingle();
+      if (userProfile == null) return routes.login;
+
       if (userProfile['has_on_boarded']) {
         return routes.home;
-      } else {
-        return routes.onboarding;
       }
+      return routes.onboarding;
     } catch (e) {
       return routes.login;
     }

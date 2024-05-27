@@ -1,5 +1,6 @@
 import 'package:dotted/models/on_boarding_page_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class OnBoardingPagePresenter extends StatefulWidget {
   final List<OnBoardingPageModel> pages;
@@ -40,6 +41,7 @@ class _OnboardingPageState extends State<OnBoardingPagePresenter> {
           child: Column(
             children: [
               Expanded(
+                flex: 1,
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: widget.pages.length,
@@ -53,16 +55,18 @@ class _OnboardingPageState extends State<OnBoardingPagePresenter> {
                     return Column(
                       children: [
                         Expanded(
+                          flex: 2,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Image.network(
+                            child: SvgPicture.asset(
                               item.imageUrl,
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
                         Expanded(
-                            flex: 1,
-                            child: Column(children: [
+                          child: Column(
+                            children: [
                               Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Text(item.title,
@@ -87,38 +91,41 @@ class _OnboardingPageState extends State<OnBoardingPagePresenter> {
                                         ?.copyWith(
                                           color: item.textColor,
                                         )),
-                              )
-                            ]))
+                              ),
+                              preferences.isNotEmpty
+                                  ? Wrap(
+                                      spacing: 10,
+                                      children: preferences.map((item) {
+                                        final activeItem = widget
+                                            .pages[_currentPage]
+                                            .selectedPreferences
+                                            .contains(item);
+                                        return ElevatedButton(
+                                          onPressed: () {
+                                            widget.pages[_currentPage]
+                                                .onPreferenceSelected(item);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: activeItem
+                                                ? Colors.purple.shade100
+                                                : null,
+                                          ),
+                                          child: Text(
+                                            item.name,
+                                          ),
+                                        );
+                                      }).toList(),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ],
+                          ),
+                        )
                       ],
                     );
                   },
                 ),
               ),
-              preferences.isNotEmpty
-                  ? Expanded(
-                      child: Wrap(
-                        spacing: 10,
-                        children: preferences.map((item) {
-                          final activeItem = widget
-                              .pages[_currentPage].selectedPreferences
-                              .contains(item);
-                          return ElevatedButton(
-                            onPressed: () {
-                              widget.pages[_currentPage]
-                                  .onPreferenceSelected(item);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  activeItem ? Colors.purple.shade100 : null,
-                            ),
-                            child: Text(
-                              item.name,
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    )
-                  : const SizedBox(),
+
               // Current page indicator
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

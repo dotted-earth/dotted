@@ -35,28 +35,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
 
     if (userProfile != null) {
-      emit(AuthSuccess(
+      emit(
+        AuthSuccess(
           user: userProfile,
           navigateToPage:
               userProfile.hasOnBoarded ? routes.home : routes.onboarding,
-          isLoading: false));
+          isLoading: false,
+        ),
+      );
       return;
     }
 
     final newUserProfile = UserProfileModel(
       id: user.id,
       hasOnBoarded: false,
-      isEmailVerified: user.userMetadata?['email_verified'],
-      fullName: user.userMetadata?['full_name'],
-      username: "",
+      isEmailVerified: user.userMetadata?['email_verified'] ?? false,
+      fullName: user.userMetadata?['full_name'] ?? '',
+      username: user.userMetadata?['name'] ?? '',
+      avatarUrl: user.userMetadata?['avatar_url'] ?? '',
     );
-    final res = await supabase.from("profiles").upsert(newUserProfile.toJson());
+
+    final res = await supabase
+        .from("profiles")
+        .upsert(newUserProfile.toJson())
+        .select('*')
+        .single();
+
     userProfile = UserProfileModel.fromMap(res);
 
-    emit(AuthSuccess(
+    emit(
+      AuthSuccess(
         user: userProfile,
         navigateToPage: routes.onboarding,
-        isLoading: false));
+        isLoading: false,
+      ),
+    );
   }
 
   Future<void> _onAuthWithGoogleRequest(

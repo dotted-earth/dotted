@@ -1,6 +1,5 @@
 import 'package:dotted/bloc/auth/auth_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -66,7 +65,10 @@ class LoginPage extends StatelessWidget {
                   label: const Text("Sign-in with Apple"),
                   icon: isLoading
                       ? const CircularProgressIndicator.adaptive()
-                      : Brand(Brands.apple_logo),
+                      : Brand(
+                          Brands.apple_logo,
+                          size: 42,
+                        ),
                 ),
               ],
             ),

@@ -114,7 +114,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                   title: 'Welcome to Dotted!',
                   description:
                       "Before we can begin, we have to get your travel preferences in order to serve you",
-                  imageUrl: 'https://i.ibb.co/cJqsPSB/scooter.png',
+                  imageUrl: 'assets/images/traveling-bro.svg',
                   preferences: [],
                   selectedPreferences: {},
                   onPreferenceSelected: (_) {},
@@ -122,8 +122,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 OnBoardingPageModel(
                   title: 'Recreations',
                   description: 'What kind of activities do you like?',
-                  imageUrl:
-                      'https://cdn-icons-png.freepik.com/512/962/962431.png',
+                  imageUrl: 'assets/images/directions-bro.svg',
                   preferences: recreations,
                   selectedPreferences: _userRecreations,
                   onPreferenceSelected: _toggleUserRecreation,
@@ -131,8 +130,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 OnBoardingPageModel(
                   title: 'Diets',
                   description: 'What is your general diet?',
-                  imageUrl:
-                      'https://cdn-icons-png.freepik.com/512/3775/3775187.png',
+                  imageUrl: 'assets/images/chef-bro.svg',
                   preferences: diets,
                   selectedPreferences: _userDiets,
                   onPreferenceSelected: _toggleUserDiet,
@@ -140,8 +138,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 OnBoardingPageModel(
                   title: 'Cuisines',
                   description: 'What kind of foods do you like?',
-                  imageUrl:
-                      'https://cdn-icons-png.freepik.com/512/11040/11040884.png',
+                  imageUrl: 'assets/images/korean-food-bro.svg',
                   preferences: cuisines,
                   selectedPreferences: _userCuisines,
                   onPreferenceSelected: _toggleUserCuisine,
@@ -149,8 +146,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
                 OnBoardingPageModel(
                   title: 'Food Allergies',
                   description: 'Do you have any food allergies?',
-                  imageUrl:
-                      'https://cdn-icons-png.freepik.com/512/5282/5282049.png',
+                  imageUrl: 'assets/images/pollen-allergy-bro.svg',
                   preferences: foodAllergies,
                   selectedPreferences: _userFoodAllergies,
                   onPreferenceSelected: _toggleUserFoodAllergies,
