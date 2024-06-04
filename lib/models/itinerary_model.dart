@@ -13,6 +13,7 @@ class ItineraryModel {
   int budget;
   ItineraryStatusEnum itineraryStatus;
   MedialModel? media;
+  String accommodation;
 
   ItineraryModel({
     this.id,
@@ -25,6 +26,7 @@ class ItineraryModel {
     required this.destination,
     required this.budget,
     required this.itineraryStatus,
+    required this.accommodation,
   });
 
   ItineraryModel copyWith({
@@ -38,6 +40,7 @@ class ItineraryModel {
     int? budget,
     ItineraryStatusEnum? itineraryStatus,
     MedialModel? image,
+    String? accommodation,
   }) {
     return ItineraryModel(
       id: id ?? this.id,
@@ -50,6 +53,7 @@ class ItineraryModel {
       budget: budget ?? this.budget,
       itineraryStatus: itineraryStatus ?? this.itineraryStatus,
       media: media,
+      accommodation: accommodation ?? this.accommodation,
     );
   }
 
@@ -65,6 +69,7 @@ class ItineraryModel {
       'budget': budget,
       'itinerary_status': itineraryStatus.name,
       'media': media?.toMap(),
+      'accommodation': accommodation,
     };
   }
 
@@ -83,6 +88,7 @@ class ItineraryModel {
       itineraryStatus: ItineraryStatusEnum.values
           .firstWhere((element) => element.name == map['itinerary_status']),
       media: map['media'] is Map ? MedialModel.fromMap(map['media']) : null,
+      accommodation: map['accommodation'] as String,
     );
   }
 
@@ -93,7 +99,7 @@ class ItineraryModel {
 
   @override
   String toString() {
-    return 'ItineraryModel(id: $id, createdAt: $createdAt, userId: $userId, startDate: $startDate, endDate: $endDate, lengthOfStay: $lengthOfStay, destination: $destination, budget: $budget, itineraryStatus: $itineraryStatus, media: $media)';
+    return 'ItineraryModel(id: $id, createdAt: $createdAt, userId: $userId, startDate: $startDate, endDate: $endDate, lengthOfStay: $lengthOfStay, destination: $destination, budget: $budget, itineraryStatus: $itineraryStatus, media: $media, accommodation: $accommodation)';
   }
 
   @override
@@ -109,7 +115,8 @@ class ItineraryModel {
         other.destination == destination &&
         other.budget == budget &&
         other.itineraryStatus == itineraryStatus &&
-        other.media == media;
+        other.media == media &&
+        other.accommodation == accommodation;
   }
 
   @override
@@ -123,6 +130,7 @@ class ItineraryModel {
         destination.hashCode ^
         budget.hashCode ^
         itineraryStatus.hashCode ^
-        media.hashCode;
+        media.hashCode ^
+        accommodation.hashCode;
   }
 }

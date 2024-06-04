@@ -27,14 +27,15 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
 
-    supabase.auth.onAuthStateChange.listen((data) {
-      final event = data.event;
-      if (event == AuthChangeEvent.initialSession && data.session != null) {
-        context
-            .read<AuthBloc>()
-            .add(AuthLoginFromSession(user: data.session!.user));
-      }
-    });
+    // supabase.auth.onAuthStateChange.listen((data) {
+    //   final event = data.event;
+    //   if (event == AuthChangeEvent.initialSession && data.session != null) {
+    //     // print(data.session!.user);
+    //     // context
+    //     //     .read<AuthBloc>()
+    //     //     .add(AuthLoginFromSession(user: data.session!.user));
+    //   }
+    // });
   }
 
   @override

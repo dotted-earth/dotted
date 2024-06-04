@@ -33,7 +33,8 @@ class ItinerariesProvider {
       'destination': itinerary.destination,
       'budget': itinerary.budget,
       'itinerary_status': itinerary.itineraryStatus.name,
-      'media_id': itinerary.media?.id
+      'media_id': itinerary.media?.id,
+      'accommodation': itinerary.accommodation,
     };
 
     return _supabase

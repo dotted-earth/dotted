@@ -27,7 +27,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       User user, Emitter<AuthState> emit) async {
     var userProfile = await supabase
         .from("profiles")
-        .select()
+        .select('*')
         .eq("id", user.id)
         .maybeSingle()
         .then(
@@ -55,13 +55,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       avatarUrl: user.userMetadata?['avatar_url'] ?? '',
     );
 
-    final res = await supabase
-        .from("profiles")
-        .upsert(newUserProfile.toJson())
-        .select('*')
-        .single();
+    try {
+      final res = await supabase.from("profiles").insert({
+        'id': newUserProfile.id,
+        'username': newUserProfile.username,
+        'full_name': newUserProfile.fullName,
+        'avatar_url': newUserProfile.avatarUrl,
+        'is_email_verified': newUserProfile.isEmailVerified,
+        'has_on_boarded': newUserProfile.hasOnBoarded
+      });
 
-    userProfile = UserProfileModel.fromMap(res);
+      if (res != null) {
+        userProfile = UserProfileModel.fromMap(res);
+      }
+    } catch (e) {
+      print("FUCK $e");
+    }
 
     emit(
       AuthSuccess(

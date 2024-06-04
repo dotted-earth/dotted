@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dotted/models/viator_destination_model.dart';
 import 'package:dotted/providers/viator_provider.dart';
 import 'package:dotted/utils/devices/devices.dart';
 import 'package:flutter/material.dart';

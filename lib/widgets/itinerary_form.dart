@@ -62,14 +62,15 @@ class _ItineraryFormState extends State<ItineraryForm> {
         _dates.length == 1 ? 1 : _dates[1]!.difference(_dates[0]!).inDays + 1;
 
     final itinerary = ItineraryModel(
-      userId: supabase.auth.currentUser!.id,
-      startDate: _dates[0]!,
-      endDate: _dates.length == 1 ? _dates[0]! : _dates[1]!,
-      lengthOfStay: lengthOfStay,
-      destination: "${widget.destination.city}, ${widget.destination.country}",
-      budget: int.tryParse(_budgetController.text) ?? 0,
-      itineraryStatus: ItineraryStatusEnum.ai_pending,
-    );
+        userId: supabase.auth.currentUser!.id,
+        startDate: _dates[0]!,
+        endDate: _dates.length == 1 ? _dates[0]! : _dates[1]!,
+        lengthOfStay: lengthOfStay,
+        destination:
+            "${widget.destination.city}, ${widget.destination.country}",
+        budget: int.tryParse(_budgetController.text) ?? 0,
+        itineraryStatus: ItineraryStatusEnum.ai_pending,
+        accommodation: _accommodation);
 
     ItinerariesRepository repo = ItinerariesRepository(
         ItinerariesProvider(), UnsplashRepository(UnsplashProvider()));
