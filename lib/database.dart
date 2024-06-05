@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
@@ -10,62 +9,36 @@ import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 
 part 'database.g.dart';
 
-class Destinations extends Table {
-  IntColumn get id => integer().autoIncrement()();
+class WorldCities extends Table {
   TextColumn get city => text()();
+  TextColumn get cityAscii => text()();
+  TextColumn get state => text()();
   TextColumn get country => text()();
   RealColumn get lat => real()();
   RealColumn get lon => real()();
-  TextColumn get iso31661_2 => text()();
-  TextColumn get iso31661_3 => text()();
-  TextColumn get iso31661_num => text().nullable()();
+  TextColumn get iso2 => text()();
+  TextColumn get iso3 => text()();
 }
 
-@DriftDatabase(tables: [Destinations])
+@DriftDatabase(tables: [WorldCities])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
 
-  @override
-  MigrationStrategy get migration {
-    return MigrationStrategy(
-      onCreate: (Migrator m) async {
-        await m.createAll();
-      },
-      onUpgrade: (Migrator m, int from, int to) async {
-        await customStatement('PRAGMA foreign_keys = OFF');
-        await transaction(() async {
-          // perform migrations
-        });
+  Future<List<WorldCity>> getDestinations(String partialString) async {
+    final _worldCities = select(worldCities);
 
-        if (kDebugMode) {
-          final wrongForeignKeys =
-              await customSelect('PRAGMA foreign_key_check').get();
-          assert(wrongForeignKeys.isEmpty,
-              '${wrongForeignKeys.map((e) => e.data)}');
-        }
-      },
-      beforeOpen: (details) async {
-        if (details.wasCreated) {}
-
-        await customStatement('PRAGMA foreign_keys = ON');
-      },
-    );
-  }
-
-  Future<List<Destination>> getDestinations(String partialString) {
-    final _destinations = select(destinations);
-
-    _destinations.where((tbl) {
+    _worldCities.where((tbl) {
       return tbl.country.contains(partialString) |
-          tbl.city.contains(partialString);
+          tbl.city.contains(partialString) |
+          tbl.cityAscii.contains(partialString);
     });
 
-    _destinations.limit(10);
+    _worldCities.limit(10);
 
-    return _destinations.get();
+    return _worldCities.get();
   }
 }
 
@@ -78,7 +51,7 @@ LazyDatabase _openConnection() {
     final file = File(p.join(dbFolder.path, 'db.db'));
 
     if (!await file.exists()) {
-      final blob = await rootBundle.load('assets/destinations.db');
+      final blob = await rootBundle.load('assets/world_cities.db');
       final buffer = blob.buffer;
       await file.writeAsBytes(
           buffer.asUint8List(blob.offsetInBytes, blob.lengthInBytes));

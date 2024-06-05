@@ -14,7 +14,7 @@ class ItinerariesPage extends StatefulWidget {
 
 class _ItinerariesPageState extends State<ItinerariesPage> {
   GlobalKey upcomingItinerariesKey = GlobalKey();
-  Destination? _destination;
+  WorldCity? _destination;
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +31,12 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
               height: 16,
             ),
             RawAutocomplete(
-              displayStringForOption: (option) =>
-                  '${option.city}, ${option.country}',
+              displayStringForOption: (option) {
+                final cityName =
+                    Set.of([option.city, option.state, option.country])
+                        .toList();
+                return cityName.join(', ');
+              },
               optionsViewBuilder: (context, onSelected, options) {
                 return Align(
                   alignment: Alignment.topLeft,
@@ -44,14 +48,17 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
                         padding: const EdgeInsets.all(8.0),
                         itemCount: options.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final Destination option = options.elementAt(index);
+                          final WorldCity option = options.elementAt(index);
+                          final cityName = Set.of(
+                                  [option.city, option.state, option.country])
+                              .toList();
                           return GestureDetector(
                             onTap: () {
                               onSelected(option);
                               _destination = option;
                             },
                             child: ListTile(
-                              title: Text('${option.city}, ${option.country}'),
+                              title: Text(cityName.join(", ")),
                             ),
                           );
                         },
@@ -62,7 +69,7 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
               },
               optionsBuilder: (textEditingValue) async {
                 final text = textEditingValue.text;
-                if (text.length < 2) return List<Destination>.empty();
+                if (text.length < 2) return List<WorldCity>.empty();
                 return await database.getDestinations(text);
               },
               fieldViewBuilder: (context, textEditingController, focusNode,
