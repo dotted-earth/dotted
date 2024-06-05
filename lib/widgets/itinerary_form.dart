@@ -19,7 +19,7 @@ const formControl = SizedBox(height: 24);
 class ItineraryForm extends StatefulWidget {
   const ItineraryForm({super.key, required this.destination});
 
-  final Destination destination;
+  final WorldCity destination;
 
   @override
   State<ItineraryForm> createState() => _ItineraryFormState();
