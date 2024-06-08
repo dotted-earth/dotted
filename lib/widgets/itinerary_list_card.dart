@@ -1,18 +1,33 @@
 import 'package:dotted/models/itinerary_model.dart';
 import 'package:dotted/models/itinerary_status_enum.dart';
+import 'package:dotted/screens/schedule_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ItineraryListCard extends StatelessWidget {
-  const ItineraryListCard(
-      {super.key,
-      required this.itinerary,
-      required this.onDelete,
-      required this.index});
+  const ItineraryListCard({
+    super.key,
+    required this.itinerary,
+    required this.onDelete,
+    required this.index,
+  });
   final ItineraryModel itinerary;
   final VoidCallback onDelete;
   final int index;
+
+  String getFriendlyStatusName(ItineraryStatusEnum status) {
+    switch (status.name) {
+      case 'ai_pending':
+        return "Generating Itinerary";
+      case 'ai_failure':
+        return "Generation Failed";
+      case "draft":
+        return "Itinerary Draft";
+      default:
+        return 'Unknown Status';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +38,28 @@ class ItineraryListCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             itinerary.media?.id != null
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      itinerary.media!.url,
-                      width: double.maxFinite,
-                      height: 200,
-                      fit: BoxFit.cover,
+                ? GestureDetector(
+                    onTap: () {
+                      if (itinerary.itineraryStatus.index <
+                          ItineraryStatusEnum.draft.index) {
+                        return;
+                      }
+
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return SchedulePage(
+                          itinerary: itinerary,
+                        );
+                      }));
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        itinerary.media!.url,
+                        width: double.maxFinite,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   )
                 : const SizedBox(
@@ -53,26 +83,51 @@ class ItineraryListCard extends StatelessWidget {
                         const TextStyle(color: Colors.blueAccent, fontSize: 14),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 16,
                   ),
                   Row(
                     children: [
                       Text(
-                          itinerary.itineraryStatus.name
-                              .split('_')
-                              .join(" ")
-                              .toUpperCase(),
-                          style: TextStyle(
-                              color: Colors.grey.shade500, fontSize: 14)),
+                        getFriendlyStatusName(itinerary.itineraryStatus),
+                        style: TextStyle(
+                            color: Colors.grey.shade500, fontSize: 14),
+                      ),
                       const Spacer(),
-                      itinerary.itineraryStatus.index <=
-                              ItineraryStatusEnum.draft.index
-                          ? IconButton(
-                              onPressed: onDelete,
-                              icon: const Icon(Icons.delete),
-                              tooltip: "Delete",
+                      itinerary.itineraryStatus.name == 'ai_failure'
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.auto_fix_high),
+                                  tooltip: "Retry",
+                                ),
+                                IconButton(
+                                  onPressed: onDelete,
+                                  icon: const Icon(Icons.delete),
+                                  tooltip: "Delete",
+                                ),
+                              ],
                             )
-                          : const SizedBox.shrink(),
+                          : itinerary.itineraryStatus.name == 'ai_pending'
+                              ? SizedBox(
+                                  height: 48,
+                                  width: 48,
+                                  child: Center(
+                                    child: SpinKitChasingDots(
+                                      color: Colors.purple.shade200,
+                                      size: 24,
+                                    ),
+                                  ),
+                                )
+                              : itinerary.itineraryStatus.index <=
+                                      ItineraryStatusEnum.draft.index
+                                  ? IconButton(
+                                      onPressed: onDelete,
+                                      icon: const Icon(Icons.delete),
+                                      tooltip: "Delete",
+                                    )
+                                  : const SizedBox.shrink(),
                     ],
                   ),
                 ],
@@ -81,9 +136,6 @@ class ItineraryListCard extends StatelessWidget {
           ],
         ),
       ),
-    )
-        .animate()
-        .fade(delay: (250 * this.index).ms)
-        .moveY(begin: 20, end: 0, duration: 500.ms);
+    );
   }
 }

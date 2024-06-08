@@ -1,8 +1,10 @@
 import 'package:dotted/models/media_modal.dart';
+import 'package:dotted/models/schedule.dart';
 import 'package:dotted/providers/media_provider.dart';
 import 'package:dotted/repositories/unsplash_repository.dart';
 import 'package:dotted/models/itinerary_model.dart';
 import 'package:dotted/providers/itineraries_provider.dart';
+import "package:dartz/dartz.dart";
 
 class ItinerariesRepository {
   late ItinerariesProvider _itinerariesProvider;
@@ -53,6 +55,23 @@ class ItinerariesRepository {
       return data;
     } catch (err) {
       throw err.toString();
+    }
+  }
+
+  Future<Either<String, Schedule>> getItinerarySchedule(int itineraryId) async {
+    try {
+      final data = await _itinerariesProvider.getItinerarySchedule(itineraryId);
+      if (data == null) {
+        return Left("There is an error: no data");
+      }
+
+      final List<Schedule> schedules = (data['schedules'] as List<dynamic>)
+          .map((schedule) => Schedule.fromMap(schedule))
+          .toList();
+
+      return Right(schedules[0]);
+    } catch (e) {
+      return Left("There is an error: $e");
     }
   }
 }
