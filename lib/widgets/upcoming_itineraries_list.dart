@@ -1,4 +1,4 @@
-import 'package:dotted/bloc/itinerary/upcoming_itineraries_bloc.dart';
+import 'package:dotted/bloc/upcoming_itineraries/upcoming_itineraries_bloc.dart';
 import 'package:dotted/models/itinerary_model.dart';
 import 'package:dotted/widgets/itinerary_list_card.dart';
 import 'package:flutter/material.dart';

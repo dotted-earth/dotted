@@ -46,6 +46,15 @@ class ItinerariesProvider {
         .single();
   }
 
+  PostgrestTransformBuilder<Map<String, dynamic>?> getItinerarySchedule(
+      int itineraryId) {
+    return _supabase
+        .from("itineraries")
+        .select("*,schedules(*,schedule_items(*))")
+        .eq('id', itineraryId)
+        .maybeSingle();
+  }
+
   PostgrestFilterBuilder<dynamic> deleteItinerary(int itineraryId) {
     return _supabase.from("itineraries").delete().eq("id", itineraryId);
   }

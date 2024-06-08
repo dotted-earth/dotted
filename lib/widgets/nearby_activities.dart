@@ -21,18 +21,6 @@ class _NearbyActivitiesState extends State<NearbyActivities> {
   void getLocation() async {
     if (mounted) {
       final location = await DevicesUtils.getLocation();
-
-      if (location == null) {
-        return;
-      }
-
-      setState(() {
-        _location = location;
-      });
-
-      // final something = await ViatorProvider().getDestinations('taiwan');
-      // final viatorDestinations =
-      //     ViatorDestinationModel.fromMap(jsonDecode(something.body));
     }
   }
 

@@ -34,6 +34,7 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
               displayStringForOption: (option) {
                 final cityName =
                     Set.of([option.city, option.state, option.country])
+                        .where((item) => item.isNotEmpty)
                         .toList();
                 return cityName.join(', ');
               },
@@ -51,6 +52,7 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
                           final WorldCity option = options.elementAt(index);
                           final cityName = Set.of(
                                   [option.city, option.state, option.country])
+                              .where((item) => item.isNotEmpty)
                               .toList();
                           return GestureDetector(
                             onTap: () {
@@ -114,7 +116,7 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
             //   width: double.maxFinite,
             //   child: GoogleMaps(),
             // ),
-            NearbyActivities()
+            // NearbyActivities()
           ],
         ),
       ),
