@@ -19,6 +19,7 @@ class GoogleMapsState extends State<GoogleMaps> {
   initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
       final location = await DevicesUtils.getLocation();
       if (location.latitude == null || location.longitude == null) return;
 

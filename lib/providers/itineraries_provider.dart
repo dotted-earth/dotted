@@ -35,6 +35,8 @@ class ItinerariesProvider {
       'itinerary_status': itinerary.itineraryStatus.name,
       'media_id': itinerary.media?.id,
       'accommodation': itinerary.accommodation,
+      'start_time': itinerary.startTime,
+      'end_time': itinerary.endTime,
     };
 
     return _supabase

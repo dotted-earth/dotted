@@ -13,6 +13,7 @@ import 'package:dotted/repositories/itineraries_repository.dart';
 import 'package:dotted/utils/constants/supabase.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:intl/intl.dart';
 
 const formControl = SizedBox(height: 24);
 
@@ -28,8 +29,8 @@ class ItineraryForm extends StatefulWidget {
 class _ItineraryFormState extends State<ItineraryForm> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _destinationController;
-  final TextEditingController _checkInController = TextEditingController();
-  final TextEditingController _checkOutController = TextEditingController();
+  final TextEditingController _startTimeController = TextEditingController();
+  final TextEditingController _endTimeController = TextEditingController();
   final TextEditingController _budgetController = TextEditingController();
   String _accommodation = '';
   int _adults = 1;
@@ -47,30 +48,37 @@ class _ItineraryFormState extends State<ItineraryForm> {
   void dispose() {
     super.dispose();
     _destinationController.dispose();
-    _checkInController.dispose();
-    _checkOutController.dispose();
+    _startTimeController.dispose();
+    _endTimeController.dispose();
     _budgetController.dispose();
   }
 
   Future<void> _onGenerate() async {
     if (_dates.isEmpty) return;
-    if (_checkInController.text.isEmpty) return;
-    if (_checkOutController.text.isEmpty) return;
+    if (_startTimeController.text.isEmpty) return;
+    if (_endTimeController.text.isEmpty) return;
     if (_accommodation.isEmpty) return;
 
     int lengthOfStay =
         _dates.length == 1 ? 1 : _dates[1]!.difference(_dates[0]!).inDays + 1;
 
+    final startTime = DateFormat("HH:mm")
+        .format(DateFormat("h:mm a").parse(_startTimeController.text));
+    final endTime = DateFormat("HH:mm")
+        .format(DateFormat("h:mm a").parse(_endTimeController.text));
+
     final itinerary = ItineraryModel(
-        userId: supabase.auth.currentUser!.id,
-        startDate: _dates[0]!,
-        endDate: _dates.length == 1 ? _dates[0]! : _dates[1]!,
-        lengthOfStay: lengthOfStay,
-        destination:
-            "${widget.destination.city}, ${widget.destination.country}",
-        budget: int.tryParse(_budgetController.text) ?? 0,
-        itineraryStatus: ItineraryStatusEnum.ai_pending,
-        accommodation: _accommodation);
+      userId: supabase.auth.currentUser!.id,
+      startDate: _dates[0]!,
+      endDate: _dates.length == 1 ? _dates[0]! : _dates[1]!,
+      lengthOfStay: lengthOfStay,
+      destination: "${widget.destination.city}, ${widget.destination.country}",
+      budget: int.tryParse(_budgetController.text) ?? 0,
+      itineraryStatus: ItineraryStatusEnum.ai_pending,
+      accommodation: _accommodation,
+      startTime: startTime,
+      endTime: endTime,
+    );
 
     ItinerariesRepository repo = ItinerariesRepository(
         ItinerariesProvider(), UnsplashRepository(UnsplashProvider()));
@@ -333,12 +341,20 @@ class _ItineraryFormState extends State<ItineraryForm> {
                 children: [
                   Expanded(
                     child: TextFormField(
-                      controller: _checkInController,
+                      controller: _startTimeController,
                       onTap: () async {
+                        var initialTime = TimeOfDay.now();
+                        if (_startTimeController.text.isNotEmpty) {
+                          final parsedTime = DateFormat.jm()
+                              .parseLoose(_startTimeController.text);
+                          final hour = parsedTime.hour;
+                          final minute = parsedTime.minute;
+                          initialTime = TimeOfDay(hour: hour, minute: minute);
+                        }
                         final time = await showTimePicker(
-                            context: context, initialTime: TimeOfDay.now());
+                            context: context, initialTime: initialTime);
                         if (time != null) {
-                          _checkInController.text = time.format(context);
+                          _startTimeController.text = time.format(context);
                         }
                       },
                       readOnly: true,
@@ -349,7 +365,7 @@ class _ItineraryFormState extends State<ItineraryForm> {
                           prefixIcon: const Icon(
                             FontAwesome.clock,
                           ),
-                          hintText: "Check-in"),
+                          hintText: "Start Time"),
                     ),
                   ),
                   const SizedBox(
@@ -357,12 +373,21 @@ class _ItineraryFormState extends State<ItineraryForm> {
                   ),
                   Expanded(
                     child: TextFormField(
-                      controller: _checkOutController,
+                      controller: _endTimeController,
                       onTap: () async {
+                        var initialTime = TimeOfDay.now();
+                        if (_endTimeController.text.isNotEmpty) {
+                          final parsedTime = DateFormat.jm()
+                              .parseLoose(_endTimeController.text);
+                          final hour = parsedTime.hour;
+                          final minute = parsedTime.minute;
+                          initialTime = TimeOfDay(hour: hour, minute: minute);
+                        }
+
                         final time = await showTimePicker(
-                            context: context, initialTime: TimeOfDay.now());
+                            context: context, initialTime: initialTime);
                         if (time != null) {
-                          _checkOutController.text = time.format(context);
+                          _endTimeController.text = time.format(context);
                         }
                       },
                       readOnly: true,
@@ -373,7 +398,7 @@ class _ItineraryFormState extends State<ItineraryForm> {
                           prefixIcon: const Icon(
                             FontAwesome.clock,
                           ),
-                          hintText: "Check-out"),
+                          hintText: "End Time"),
                     ),
                   ),
                 ],
