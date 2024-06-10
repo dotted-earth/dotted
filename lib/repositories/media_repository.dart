@@ -1,5 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dotted/models/media_modal.dart';
+import 'package:dotted/models/media_type_enum.dart';
 import 'package:dotted/providers/media_provider.dart';
 
 class MediaRepository {
@@ -12,11 +12,11 @@ class MediaRepository {
     _mediaProvider = mediaProvider;
   }
 
-  Future<MedialModel> createMedia(String url) async {
+  Future<MediaModel> createMedia(String url, MediaTypeEnum mediaType) async {
     try {
-      final data = await _mediaProvider.createMedia(url);
+      final data = await _mediaProvider.createMedia(url, mediaType);
 
-      return MedialModel.fromMap(data);
+      return MediaModel.fromMap(data);
     } catch (err) {
       throw err.toString();
     }

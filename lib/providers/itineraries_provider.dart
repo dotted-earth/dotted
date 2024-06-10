@@ -1,6 +1,7 @@
 import 'package:dotted/models/itinerary_model.dart';
 import 'package:dotted/models/itinerary_status_enum.dart';
 import 'package:dotted/utils/constants/supabase.dart';
+import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ItinerariesProvider {
@@ -34,9 +35,7 @@ class ItinerariesProvider {
       'budget': itinerary.budget,
       'itinerary_status': itinerary.itineraryStatus.name,
       'media_id': itinerary.media?.id,
-      'accommodation': itinerary.accommodation,
-      'start_time': itinerary.startTime,
-      'end_time': itinerary.endTime,
+      'accommodation': itinerary.accommodation
     };
 
     return _supabase
@@ -52,7 +51,8 @@ class ItinerariesProvider {
       int itineraryId) {
     return _supabase
         .from("itineraries")
-        .select("*,schedules(*,schedule_items(*))")
+        .select(
+            "*,schedule_items(*, point_of_interest:point_of_interests(*, location:locations(*), address:addresses(*)))")
         .eq('id', itineraryId)
         .maybeSingle();
   }

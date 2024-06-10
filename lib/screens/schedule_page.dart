@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:dotted/bloc/schedule/schedule_bloc.dart';
 import 'package:dotted/models/itinerary_model.dart';
-import 'package:dotted/models/schedule_item.dart';
+import 'package:dotted/models/schedule_item_model.dart';
 import 'package:dotted/providers/itineraries_provider.dart';
 import 'package:dotted/providers/unsplash_provider.dart';
 import 'package:dotted/repositories/itineraries_repository.dart';
@@ -72,12 +72,10 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
               return Center(child: Text(state.error));
             }
 
-            if (state.schedule != null) {
-              final schedule = state.schedule!;
-
+            if (state.scheduleItems != null) {
               // create a map the date as keys and create a list of schedule items by date
-              final scheduleItemsPerDay = schedule.scheduleItems
-                  .fold<Map<String, List<ScheduleItem>>>({}, (map, item) {
+              final scheduleItemsPerDay = state.scheduleItems!
+                  .fold<Map<String, List<ScheduleItemModel>>>({}, (map, item) {
                 final dateOnly =
                     DateUtils.dateOnly(item.startTime).toIso8601String();
                 final mapHasDayOfScheduleItem = map[dateOnly];
@@ -132,8 +130,10 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
                               return TimelineTile(
                                 endChild: SizedBox(
                                   child: Card(
+                                    margin: const EdgeInsets.only(
+                                        top: 16, bottom: 16, left: 16),
                                     child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                      padding: const EdgeInsets.all(16.0),
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.start,
@@ -152,13 +152,16 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
                                                       : FontAwesome
                                                           .utensils_solid),
                                               SizedBox(width: 16),
-                                              Flexible(child: Text(item.name)),
+                                              Flexible(
+                                                  child: Text(item
+                                                      .pointOfInterest!.name)),
                                             ],
                                           ),
                                           SizedBox(height: 16),
                                           Text(
                                               "${DateFormat.Hm().format(item.startTime)} - ${DateFormat.Hm().format(item.endTime)}"),
-                                          Text(item.description),
+                                          Text(item
+                                              .pointOfInterest!.description),
                                         ],
                                       ),
                                     ),

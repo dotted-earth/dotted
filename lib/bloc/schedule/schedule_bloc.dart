@@ -1,5 +1,5 @@
+import 'package:dotted/models/schedule_item_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dotted/models/schedule.dart';
 import 'package:dotted/providers/itineraries_provider.dart';
 import 'package:dotted/providers/unsplash_provider.dart';
 import 'package:dotted/repositories/unsplash_repository.dart';
@@ -31,8 +31,8 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
         await itinerariesRepository.getItinerarySchedule(event.itineraryId);
     data.fold((error) {
       emit(ScheduleFailure(itinerary: itinerary, error: error));
-    }, (schedule) {
-      emit(ScheduleSuccess(itinerary: itinerary, schedule: schedule));
+    }, (scheduleItems) {
+      emit(ScheduleSuccess(itinerary: itinerary, scheduleItems: scheduleItems));
     });
   }
 }

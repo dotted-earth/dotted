@@ -4,24 +4,24 @@ class ScheduleState extends Equatable {
   const ScheduleState({
     required this.itinerary,
     this.error,
-    this.schedule,
+    this.scheduleItems,
   });
 
   final ItineraryModel itinerary;
   final String? error;
-  final Schedule? schedule;
+  final List<ScheduleItemModel>? scheduleItems;
 
-  ScheduleState copyWith(
-      ItineraryModel? itinerary, String? error, Schedule? schedule) {
+  ScheduleState copyWith(ItineraryModel? itinerary, String? error,
+      List<ScheduleItemModel>? scheduleItems) {
     return ScheduleState(
       itinerary: itinerary ?? this.itinerary,
       error: error ?? this.error,
-      schedule: schedule ?? this.schedule,
+      scheduleItems: scheduleItems ?? this.scheduleItems,
     );
   }
 
   @override
-  List<Object?> get props => [itinerary, error, schedule];
+  List<Object?> get props => [itinerary, error, scheduleItems];
 }
 
 class ScheduleInitial extends ScheduleState {
@@ -39,8 +39,8 @@ class ScheduleFailure extends ScheduleState {
 }
 
 class ScheduleSuccess extends ScheduleState {
-  final Schedule schedule;
+  final List<ScheduleItemModel> scheduleItems;
 
-  const ScheduleSuccess({required this.schedule, required super.itinerary})
+  const ScheduleSuccess({required this.scheduleItems, required super.itinerary})
       : super();
 }

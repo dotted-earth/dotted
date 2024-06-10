@@ -12,26 +12,21 @@ class ItineraryModel {
   String destination;
   int budget;
   ItineraryStatusEnum itineraryStatus;
-  MedialModel? media;
+  MediaModel? media;
   String accommodation;
-  String startTime;
-  String endTime;
 
-  ItineraryModel({
-    this.id,
-    this.createdAt,
-    this.media,
-    required this.userId,
-    required this.startDate,
-    required this.endDate,
-    required this.lengthOfStay,
-    required this.destination,
-    required this.budget,
-    required this.itineraryStatus,
-    required this.accommodation,
-    required this.startTime,
-    required this.endTime,
-  });
+  ItineraryModel(
+      {this.id,
+      this.createdAt,
+      this.media,
+      required this.userId,
+      required this.startDate,
+      required this.endDate,
+      required this.lengthOfStay,
+      required this.destination,
+      required this.budget,
+      required this.itineraryStatus,
+      required this.accommodation});
 
   ItineraryModel copyWith({
     int? id,
@@ -43,25 +38,22 @@ class ItineraryModel {
     String? destination,
     int? budget,
     ItineraryStatusEnum? itineraryStatus,
-    MedialModel? image,
+    MediaModel? image,
     String? accommodation,
-    String? startTime,
-    String? endTime,
   }) {
     return ItineraryModel(
-        id: id ?? this.id,
-        createdAt: createdAt ?? this.createdAt,
-        userId: userId ?? this.userId,
-        startDate: startDate ?? this.startDate,
-        endDate: endDate ?? this.endDate,
-        lengthOfStay: lengthOfStay ?? this.lengthOfStay,
-        destination: destination ?? this.destination,
-        budget: budget ?? this.budget,
-        itineraryStatus: itineraryStatus ?? this.itineraryStatus,
-        media: media,
-        accommodation: accommodation ?? this.accommodation,
-        startTime: startTime ?? this.startTime,
-        endTime: endTime ?? this.endTime);
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      userId: userId ?? this.userId,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      lengthOfStay: lengthOfStay ?? this.lengthOfStay,
+      destination: destination ?? this.destination,
+      budget: budget ?? this.budget,
+      itineraryStatus: itineraryStatus ?? this.itineraryStatus,
+      media: media,
+      accommodation: accommodation ?? this.accommodation,
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -76,30 +68,27 @@ class ItineraryModel {
       'budget': budget,
       'itinerary_status': itineraryStatus.name,
       'media': media?.toMap(),
-      'accommodation': accommodation,
-      'start_time': startTime,
-      'end_time': endTime,
+      'accommodation': accommodation
     };
   }
 
   factory ItineraryModel.fromMap(Map<String, dynamic> map) {
     return ItineraryModel(
-        id: map['id'] != null ? map['id'] as int : null,
-        createdAt: map['created_at'] != null
-            ? DateTime.parse(map['created_at'] as String)
-            : null,
-        userId: map['user_id'] as String,
-        startDate: DateTime.parse(map['start_date'] as String),
-        endDate: DateTime.parse(map['end_date'] as String),
-        lengthOfStay: map['length_of_stay'] as int,
-        destination: map['destination'] as String,
-        budget: map['budget'] as int,
-        itineraryStatus: ItineraryStatusEnum.values
-            .firstWhere((element) => element.name == map['itinerary_status']),
-        media: map['media'] is Map ? MedialModel.fromMap(map['media']) : null,
-        accommodation: map['accommodation'] as String,
-        startTime: map['start_time'] as String,
-        endTime: map['end_time'] as String);
+      id: map['id'] != null ? map['id'] as int : null,
+      createdAt: map['created_at'] != null
+          ? DateTime.parse(map['created_at'] as String)
+          : null,
+      userId: map['user_id'] as String,
+      startDate: DateTime.parse(map['start_date'] as String),
+      endDate: DateTime.parse(map['end_date'] as String),
+      lengthOfStay: map['length_of_stay'] as int,
+      destination: map['destination'] as String,
+      budget: map['budget'] as int,
+      itineraryStatus: ItineraryStatusEnum.values
+          .firstWhere((element) => element.name == map['itinerary_status']),
+      media: map['media'] is Map ? MediaModel.fromMap(map['media']) : null,
+      accommodation: map['accommodation'] as String,
+    );
   }
 
   String toJson() => json.encode(toMap());
@@ -109,7 +98,7 @@ class ItineraryModel {
 
   @override
   String toString() {
-    return 'ItineraryModel(id: $id, createdAt: $createdAt, userId: $userId, startDate: $startDate, endDate: $endDate, lengthOfStay: $lengthOfStay, destination: $destination, budget: $budget, itineraryStatus: $itineraryStatus, media: $media, accommodation: $accommodation, startTime: $startTime, endTime: $endTime)';
+    return 'ItineraryModel(id: $id, createdAt: $createdAt, userId: $userId, startDate: $startDate, endDate: $endDate, lengthOfStay: $lengthOfStay, destination: $destination, budget: $budget, itineraryStatus: $itineraryStatus, media: $media, accommodation: $accommodation)';
   }
 
   @override
@@ -126,9 +115,7 @@ class ItineraryModel {
         other.budget == budget &&
         other.itineraryStatus == itineraryStatus &&
         other.media == media &&
-        other.accommodation == accommodation &&
-        other.startTime == startTime &&
-        other.endTime == endTime;
+        other.accommodation == accommodation;
   }
 
   @override
@@ -143,8 +130,6 @@ class ItineraryModel {
         budget.hashCode ^
         itineraryStatus.hashCode ^
         media.hashCode ^
-        accommodation.hashCode ^
-        startTime.hashCode ^
-        endTime.hashCode;
+        accommodation.hashCode;
   }
 }

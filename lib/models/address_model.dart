@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:dotted/models/location_model.dart';
 
-class Address {
+class AddressModel {
   int id;
   String street1;
   String? street2;
@@ -12,9 +12,9 @@ class Address {
   String country;
   String? postalCode;
   String? addressString;
-  Location location;
+  LocationModel? location;
 
-  Address({
+  AddressModel({
     required this.id,
     required this.street1,
     this.street2,
@@ -23,10 +23,10 @@ class Address {
     required this.country,
     this.postalCode,
     this.addressString,
-    required this.location,
+    this.location,
   });
 
-  Address copyWith({
+  AddressModel copyWith({
     int? id,
     String? street1,
     String? street2,
@@ -35,9 +35,9 @@ class Address {
     String? country,
     String? postalCode,
     String? addressString,
-    Location? location,
+    LocationModel? location,
   }) {
-    return Address(
+    return AddressModel(
       id: id ?? this.id,
       street1: street1 ?? this.street1,
       street2: street2 ?? this.street2,
@@ -60,12 +60,12 @@ class Address {
       'country': country,
       'postal_code': postalCode,
       'address_string': addressString,
-      'location': location.toMap(),
+      'location': location?.toMap(),
     };
   }
 
-  factory Address.fromMap(Map<String, dynamic> map) {
-    return Address(
+  factory AddressModel.fromMap(Map<String, dynamic> map) {
+    return AddressModel(
       id: map['id'] as int,
       street1: map['street1'] as String,
       street2: map['street2'] != null ? map['street2'] as String : null,
@@ -77,22 +77,24 @@ class Address {
       addressString: map['address_string'] != null
           ? map['address_string'] as String
           : null,
-      location: Location.fromMap(map['location'] as Map<String, dynamic>),
+      location: map['location'] != null
+          ? LocationModel.fromMap(map['location'] as Map<String, dynamic>)
+          : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Address.fromJson(String source) =>
-      Address.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AddressModel.fromJson(String source) =>
+      AddressModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'Address(id: $id, street1: $street1, street2: $street2, city: $city, state: $state, country: $country, postalCode: $postalCode, addressString: $addressString, location: $location)';
+    return 'AddressModel(id: $id, street1: $street1, street2: $street2, city: $city, state: $state, country: $country, postalCode: $postalCode, addressString: $addressString, location: $location)';
   }
 
   @override
-  bool operator ==(covariant Address other) {
+  bool operator ==(covariant AddressModel other) {
     if (identical(this, other)) return true;
 
     return other.id == id &&
