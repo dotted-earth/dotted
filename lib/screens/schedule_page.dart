@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:dotted/bloc/schedule/schedule_bloc.dart';
 import 'package:dotted/models/itinerary_model.dart';
 import 'package:dotted/models/schedule_item_model.dart';
+import 'package:dotted/models/schedule_item_type_enum.dart';
 import 'package:dotted/providers/itineraries_provider.dart';
 import 'package:dotted/providers/unsplash_provider.dart';
 import 'package:dotted/repositories/itineraries_repository.dart';
@@ -142,15 +143,19 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
                                         children: [
                                           Row(
                                             children: [
-                                              Icon(item.scheduleItemType ==
-                                                      'transportation'
-                                                  ? FontAwesome.car_on_solid
-                                                  : item.scheduleItemType ==
-                                                          'activity'
-                                                      ? FontAwesome
-                                                          .person_walking_solid
-                                                      : FontAwesome
-                                                          .utensils_solid),
+                                              Icon(
+                                                item.scheduleItemType ==
+                                                        ScheduleItemTypeEnum
+                                                            .transportation
+                                                    ? FontAwesome.car_on_solid
+                                                    : item.scheduleItemType ==
+                                                            ScheduleItemTypeEnum
+                                                                .activity
+                                                        ? FontAwesome
+                                                            .person_walking_solid
+                                                        : FontAwesome
+                                                            .utensils_solid,
+                                              ),
                                               SizedBox(width: 16),
                                               Flexible(
                                                   child: Text(item

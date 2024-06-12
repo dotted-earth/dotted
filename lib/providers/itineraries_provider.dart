@@ -1,7 +1,6 @@
 import 'package:dotted/models/itinerary_model.dart';
 import 'package:dotted/models/itinerary_status_enum.dart';
 import 'package:dotted/utils/constants/supabase.dart';
-import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ItinerariesProvider {

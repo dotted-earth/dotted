@@ -86,7 +86,7 @@ class _ItinerariesPageState extends State<ItinerariesPage> {
                     prefixIcon: const Icon(Icons.search),
                   ),
                   onFieldSubmitted: (value) async {
-                    if (value.isEmpty) return;
+                    if (value.isEmpty || _destination == null) return;
 
                     final draftItinerary = await showModalBottomSheet(
                         context: context,

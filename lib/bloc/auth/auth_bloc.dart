@@ -69,7 +69,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         userProfile = UserProfileModel.fromMap(res);
       }
     } catch (e) {
-      print("FUCK $e");
+      print("$e");
     }
 
     emit(

@@ -67,8 +67,8 @@ class AddressModel {
   factory AddressModel.fromMap(Map<String, dynamic> map) {
     return AddressModel(
       id: map['id'] as int,
-      street1: map['street1'] as String,
-      street2: map['street2'] != null ? map['street2'] as String : null,
+      street1: map['street1'],
+      street2: map['street2'],
       city: map['city'] as String,
       state: map['state'] != null ? map['state'] as String : null,
       country: map['country'] as String,
