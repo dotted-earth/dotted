@@ -8,8 +8,8 @@ class ScheduleItemModel {
   DateTime createdAt;
   ScheduleItemTypeEnum scheduleItemType;
   int itineraryId;
-  DateTime startTime;
-  DateTime endTime;
+  DateTime? startTime;
+  DateTime? endTime;
   int duration;
   int pointOfInterestId;
   double? price;
@@ -19,11 +19,11 @@ class ScheduleItemModel {
     required this.id,
     required this.createdAt,
     required this.itineraryId,
-    required this.startTime,
-    required this.endTime,
     required this.duration,
     required this.pointOfInterestId,
     required this.scheduleItemType,
+    this.startTime,
+    this.endTime,
     this.price,
     this.pointOfInterest,
   });
@@ -59,8 +59,8 @@ class ScheduleItemModel {
       'id': id,
       'created_at': createdAt.toIso8601String(),
       'itinerary_id': itineraryId,
-      'start_time': startTime.toIso8601String(),
-      'end_time': endTime.toIso8601String(),
+      'start_time': startTime?.toIso8601String(),
+      'end_time': endTime?.toIso8601String(),
       'duration': duration,
       'point_of_interest_id': pointOfInterestId,
       'price': price,
@@ -74,8 +74,12 @@ class ScheduleItemModel {
       id: map['id'] as int,
       createdAt: DateTime.parse(map['created_at'] as String),
       itineraryId: map['itinerary_id'] as int,
-      startTime: DateTime.parse(map['start_time'] as String),
-      endTime: DateTime.parse(map['end_time'] as String),
+      startTime: map['start_time'] != null
+          ? DateTime.parse(map['start_time'] as String)
+          : null,
+      endTime: map['end_time'] != null
+          ? DateTime.parse(map['end_time'] as String)
+          : null,
       duration: map['duration'] as int,
       pointOfInterestId: map['point_of_interest_id'] as int,
       price: map['price'] is double

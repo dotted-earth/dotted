@@ -1,4 +1,6 @@
 import 'package:dotted/models/schedule_item_model.dart';
+import 'package:dotted/models/schedule_item_type_enum.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dotted/providers/itineraries_provider.dart';
 import 'package:dotted/providers/unsplash_provider.dart';
@@ -22,6 +24,7 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
           itinerary: itinerary,
         )) {
     on<RequestScheduleEvent>(_onItineraryByIdRequest);
+    on<DayScheduleChangeEvent>(_onDayScheduleChangeEvent);
   }
 
   _onItineraryByIdRequest(
@@ -32,7 +35,44 @@ class ScheduleBloc extends Bloc<ScheduleEvent, ScheduleState> {
     data.fold((error) {
       emit(ScheduleFailure(itinerary: itinerary, error: error));
     }, (scheduleItems) {
-      emit(ScheduleSuccess(itinerary: itinerary, scheduleItems: scheduleItems));
+      final ScheduleItemModel accommodation = scheduleItems.removeAt(
+          scheduleItems.indexWhere((item) =>
+              item.scheduleItemType == ScheduleItemTypeEnum.accommodation));
+
+      scheduleItems.removeWhere((item) =>
+          item.scheduleItemType == ScheduleItemTypeEnum.accommodation);
+
+      final scheduleItemsPerDay = scheduleItems
+          .fold<Map<String, List<ScheduleItemModel>>>({}, (map, item) {
+        final dateOnly = DateUtils.dateOnly(item.startTime!).toIso8601String();
+        final mapHasDayOfScheduleItem = map[dateOnly];
+
+        if (mapHasDayOfScheduleItem == null) {
+          map[dateOnly] = [item];
+        } else {
+          for (final key in map.keys) {
+            final date = DateTime.parse(key);
+            final isSameDay = DateUtils.isSameDay(item.startTime, date);
+            if (isSameDay) {
+              map[key]!.add(item);
+            }
+          }
+        }
+
+        return map;
+      });
+
+      emit(state.copyWith(
+        accommodation: accommodation,
+        scheduleItems: scheduleItemsPerDay,
+        selectedDay: scheduleItemsPerDay.keys.first,
+        error: null,
+      ));
     });
+  }
+
+  _onDayScheduleChangeEvent(
+      DayScheduleChangeEvent event, Emitter<ScheduleState> emit) {
+    emit(state.copyWith(selectedDay: event.selectedDay, error: null));
   }
 }

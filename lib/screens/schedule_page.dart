@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:dotted/bloc/schedule/schedule_bloc.dart';
 import 'package:dotted/models/itinerary_model.dart';
@@ -10,6 +12,7 @@ import 'package:dotted/repositories/unsplash_repository.dart';
 import 'package:dotted/widgets/google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import 'package:intl/intl.dart';
@@ -59,10 +62,7 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
         automaticallyImplyLeading: true,
       ),
       body: SafeArea(
-        child: BlocConsumer<ScheduleBloc, ScheduleState>(
-          listener: (context, state) {
-            // TODO: implement listener
-          },
+        child: BlocBuilder<ScheduleBloc, ScheduleState>(
           builder: (context, state) {
             if (state is ScheduleLoading || state is ScheduleInitial) {
               return const Center(
@@ -75,35 +75,15 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
 
             if (state.scheduleItems != null) {
               // create a map the date as keys and create a list of schedule items by date
-              final scheduleItemsPerDay = state.scheduleItems!
-                  .fold<Map<String, List<ScheduleItemModel>>>({}, (map, item) {
-                final dateOnly =
-                    DateUtils.dateOnly(item.startTime).toIso8601String();
-                final mapHasDayOfScheduleItem = map[dateOnly];
-
-                if (mapHasDayOfScheduleItem == null) {
-                  map[dateOnly] = [item];
-                } else {
-                  map.keys.forEach((key) {
-                    final date = DateTime.parse(key);
-                    final isSameDay = DateUtils.isSameDay(item.startTime, date);
-                    if (isSameDay) {
-                      map[key]!.add(item);
-                    }
-                  });
-                }
-
-                return map;
-              });
 
               return DefaultTabController(
                 initialIndex: 0,
-                length: scheduleItemsPerDay.keys.length,
+                length: state.scheduleItems!.keys.length,
                 child: Column(
                   children: [
-                    SizedBox(height: 256, child: GoogleMaps()),
+                    const SizedBox(height: 256, child: GoogleMaps()),
                     TabBar(
-                      tabs: scheduleItemsPerDay.keys.sorted((a, b) {
+                      tabs: state.scheduleItems!.keys.sorted((a, b) {
                         return a.compareTo(b);
                       }).map((date) {
                         final parsedDate = DateTime.parse(date);
@@ -116,18 +96,23 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
                           ),
                         );
                       }).toList(),
-                      isScrollable: scheduleItemsPerDay.keys.length > 5,
-                      tabAlignment: scheduleItemsPerDay.keys.length > 5
+                      onTap: (index) {
+                        final keys = state.scheduleItems!.keys.toList();
+                        context.read<ScheduleBloc>().add(
+                            DayScheduleChangeEvent(selectedDay: keys[index]));
+                      },
+                      isScrollable: state.scheduleItems!.length > 5,
+                      tabAlignment: state.scheduleItems!.length > 5
                           ? TabAlignment.start
                           : null,
                     ),
                     Expanded(
                       child: TabBarView(
-                        children: scheduleItemsPerDay.keys.map((key) {
-                          final scheduleItems = scheduleItemsPerDay[key]!;
+                        children: state.scheduleItems!.keys.map((key) {
+                          final scheduleItems = state.scheduleItems![key];
                           return ListView(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
-                            children: scheduleItems.mapIndexed((index, item) {
+                            children: scheduleItems!.mapIndexed((index, item) {
                               return TimelineTile(
                                 endChild: SizedBox(
                                   child: Card(
@@ -156,15 +141,15 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
                                                         : FontAwesome
                                                             .utensils_solid,
                                               ),
-                                              SizedBox(width: 16),
+                                              const SizedBox(width: 16),
                                               Flexible(
                                                   child: Text(item
                                                       .pointOfInterest!.name)),
                                             ],
                                           ),
-                                          SizedBox(height: 16),
+                                          const SizedBox(height: 16),
                                           Text(
-                                              "${DateFormat.Hm().format(item.startTime)} - ${DateFormat.Hm().format(item.endTime)}"),
+                                              "${DateFormat.Hm().format(item.startTime!)} - ${DateFormat.Hm().format(item.endTime!)}"),
                                           Text(item
                                               .pointOfInterest!.description),
                                         ],

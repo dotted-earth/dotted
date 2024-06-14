@@ -1,6 +1,7 @@
 import 'package:dotted/models/media_modal.dart';
 import 'package:dotted/models/media_type_enum.dart';
 import 'package:dotted/models/schedule_item_model.dart';
+import 'package:dotted/models/schedule_item_type_enum.dart';
 import 'package:dotted/providers/media_provider.dart';
 import 'package:dotted/repositories/unsplash_repository.dart';
 import 'package:dotted/models/itinerary_model.dart';
