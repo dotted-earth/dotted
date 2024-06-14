@@ -12,22 +12,21 @@ class ItineraryModel {
   String destination;
   int budget;
   ItineraryStatusEnum itineraryStatus;
-  MedialModel? media;
+  MediaModel? media;
   String accommodation;
 
-  ItineraryModel({
-    this.id,
-    this.createdAt,
-    this.media,
-    required this.userId,
-    required this.startDate,
-    required this.endDate,
-    required this.lengthOfStay,
-    required this.destination,
-    required this.budget,
-    required this.itineraryStatus,
-    required this.accommodation,
-  });
+  ItineraryModel(
+      {this.id,
+      this.createdAt,
+      this.media,
+      required this.userId,
+      required this.startDate,
+      required this.endDate,
+      required this.lengthOfStay,
+      required this.destination,
+      required this.budget,
+      required this.itineraryStatus,
+      required this.accommodation});
 
   ItineraryModel copyWith({
     int? id,
@@ -39,7 +38,7 @@ class ItineraryModel {
     String? destination,
     int? budget,
     ItineraryStatusEnum? itineraryStatus,
-    MedialModel? image,
+    MediaModel? image,
     String? accommodation,
   }) {
     return ItineraryModel(
@@ -69,7 +68,7 @@ class ItineraryModel {
       'budget': budget,
       'itinerary_status': itineraryStatus.name,
       'media': media?.toMap(),
-      'accommodation': accommodation,
+      'accommodation': accommodation
     };
   }
 
@@ -87,7 +86,7 @@ class ItineraryModel {
       budget: map['budget'] as int,
       itineraryStatus: ItineraryStatusEnum.values
           .firstWhere((element) => element.name == map['itinerary_status']),
-      media: map['media'] is Map ? MedialModel.fromMap(map['media']) : null,
+      media: map['media'] is Map ? MediaModel.fromMap(map['media']) : null,
       accommodation: map['accommodation'] as String,
     );
   }

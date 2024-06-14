@@ -34,7 +34,7 @@ class ItinerariesProvider {
       'budget': itinerary.budget,
       'itinerary_status': itinerary.itineraryStatus.name,
       'media_id': itinerary.media?.id,
-      'accommodation': itinerary.accommodation,
+      'accommodation': itinerary.accommodation
     };
 
     return _supabase
@@ -50,7 +50,8 @@ class ItinerariesProvider {
       int itineraryId) {
     return _supabase
         .from("itineraries")
-        .select("*,schedules(*,schedule_items(*))")
+        .select(
+            "*,schedule_items(*, point_of_interest:point_of_interests(*, location:locations(*), address:addresses(*)))")
         .eq('id', itineraryId)
         .maybeSingle();
   }

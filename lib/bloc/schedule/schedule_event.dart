@@ -14,3 +14,11 @@ class RequestScheduleEvent extends ScheduleEvent {
     required this.itineraryId,
   });
 }
+
+class DayScheduleChangeEvent extends ScheduleEvent {
+  final String selectedDay;
+
+  const DayScheduleChangeEvent({
+    required this.selectedDay,
+  });
+}

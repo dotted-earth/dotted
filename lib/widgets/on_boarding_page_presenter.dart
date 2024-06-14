@@ -54,70 +54,72 @@ class _OnboardingPageState extends State<OnBoardingPagePresenter> {
                     final item = widget.pages[idx];
                     return Column(
                       children: [
-                        Expanded(
-                          flex: 2,
+                        SizedBox(
+                          height: 400,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: SvgPicture.asset(
                               item.imageUrl,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
                         Expanded(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(item.title,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: item.textColor,
-                                        )),
-                              ),
-                              Container(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 280),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24.0, vertical: 8.0),
-                                child: Text(item.description,
-                                    textAlign: TextAlign.center,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          color: item.textColor,
-                                        )),
-                              ),
-                              preferences.isNotEmpty
-                                  ? Wrap(
-                                      spacing: 10,
-                                      children: preferences.map((item) {
-                                        final activeItem = widget
-                                            .pages[_currentPage]
-                                            .selectedPreferences
-                                            .contains(item);
-                                        return ElevatedButton(
-                                          onPressed: () {
-                                            widget.pages[_currentPage]
-                                                .onPreferenceSelected(item);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: activeItem
-                                                ? Colors.purple.shade100
-                                                : null,
-                                          ),
-                                          child: Text(
-                                            item.name,
-                                          ),
-                                        );
-                                      }).toList(),
-                                    )
-                                  : const SizedBox.shrink(),
-                            ],
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(item.title,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: item.textColor,
+                                          )),
+                                ),
+                                Container(
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 280),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24.0, vertical: 8.0),
+                                  child: Text(item.description,
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: item.textColor,
+                                          )),
+                                ),
+                                preferences.isNotEmpty
+                                    ? Wrap(
+                                        spacing: 10,
+                                        children: preferences.map((item) {
+                                          final activeItem = widget
+                                              .pages[_currentPage]
+                                              .selectedPreferences
+                                              .contains(item);
+                                          return ElevatedButton(
+                                            onPressed: () {
+                                              widget.pages[_currentPage]
+                                                  .onPreferenceSelected(item);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: activeItem
+                                                  ? Colors.purple.shade100
+                                                  : null,
+                                            ),
+                                            child: Text(
+                                              item.name,
+                                            ),
+                                          );
+                                        }).toList(),
+                                      )
+                                    : const SizedBox.shrink(),
+                              ],
+                            ),
                           ),
                         )
                       ],

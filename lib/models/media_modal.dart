@@ -1,24 +1,31 @@
 import 'dart:convert';
 
-class MedialModel {
+import 'package:dotted/models/media_type_enum.dart';
+
+class MediaModel {
   int? id;
   DateTime? createdAt;
   String url;
-  MedialModel({
+  MediaTypeEnum mediaType;
+
+  MediaModel({
     this.id,
     this.createdAt,
     required this.url,
+    required this.mediaType,
   });
 
-  MedialModel copyWith({
+  MediaModel copyWith({
     int? id,
     DateTime? createdAt,
     String? url,
+    MediaTypeEnum? mediaType,
   }) {
-    return MedialModel(
+    return MediaModel(
       id: id ?? this.id,
       createdAt: createdAt ?? this.createdAt,
       url: url ?? this.url,
+      mediaType: mediaType ?? this.mediaType,
     );
   }
 
@@ -27,34 +34,42 @@ class MedialModel {
       'id': id,
       'createdAt': createdAt?.toIso8601String(),
       'url': url,
+      'media_type': mediaType.name,
     };
   }
 
-  factory MedialModel.fromMap(Map<String, dynamic> map) {
-    return MedialModel(
+  factory MediaModel.fromMap(Map<String, dynamic> map) {
+    return MediaModel(
       id: map['id'] != null ? map['id'] as int : null,
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'] as String)
           : null,
       url: map['url'] as String,
+      mediaType: MediaTypeEnum.values
+          .firstWhere((element) => element.name == map['media_type']),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory MedialModel.fromJson(String source) =>
-      MedialModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory MediaModel.fromJson(String source) =>
+      MediaModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'MedialModel(id: $id, createdAt: $createdAt, url: $url)';
+  String toString() =>
+      'MediaModel(id: $id, createdAt: $createdAt, url: $url, mediaType: $mediaType)';
 
   @override
-  bool operator ==(covariant MedialModel other) {
+  bool operator ==(covariant MediaModel other) {
     if (identical(this, other)) return true;
 
-    return other.id == id && other.createdAt == createdAt && other.url == url;
+    return other.id == id &&
+        other.createdAt == createdAt &&
+        other.url == url &&
+        other.mediaType == mediaType;
   }
 
   @override
-  int get hashCode => id.hashCode ^ createdAt.hashCode ^ url.hashCode;
+  int get hashCode =>
+      id.hashCode ^ createdAt.hashCode ^ url.hashCode ^ mediaType.hashCode;
 }

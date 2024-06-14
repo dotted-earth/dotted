@@ -1,5 +1,7 @@
 import 'package:dotted/models/media_modal.dart';
-import 'package:dotted/models/schedule.dart';
+import 'package:dotted/models/media_type_enum.dart';
+import 'package:dotted/models/schedule_item_model.dart';
+import 'package:dotted/models/schedule_item_type_enum.dart';
 import 'package:dotted/providers/media_provider.dart';
 import 'package:dotted/repositories/unsplash_repository.dart';
 import 'package:dotted/models/itinerary_model.dart';
@@ -37,10 +39,12 @@ class ItinerariesRepository {
       final imageResponse =
           await _unsplashRepository.getRandomImage(itinerary.destination);
       final MediaProvider mediaProvider = MediaProvider();
-      final mediaResponse = await mediaProvider.createMedia(imageResponse);
+      final mediaResponse =
+          await mediaProvider.createMedia(imageResponse, MediaTypeEnum.image);
 
-      final media = MedialModel.fromMap(mediaResponse);
+      final media = MediaModel.fromMap(mediaResponse);
       itinerary.media = media;
+
       final data = await _itinerariesProvider.createItinerary(itinerary);
 
       return ItineraryModel.fromMap(data);
@@ -58,18 +62,20 @@ class ItinerariesRepository {
     }
   }
 
-  Future<Either<String, Schedule>> getItinerarySchedule(int itineraryId) async {
+  Future<Either<String, List<ScheduleItemModel>>> getItinerarySchedule(
+      int itineraryId) async {
     try {
       final data = await _itinerariesProvider.getItinerarySchedule(itineraryId);
       if (data == null) {
-        return Left("There is an error: no data");
+        return const Left("There is an error: no data");
       }
 
-      final List<Schedule> schedules = (data['schedules'] as List<dynamic>)
-          .map((schedule) => Schedule.fromMap(schedule))
-          .toList();
+      final List<ScheduleItemModel> scheduleItems =
+          (data['schedule_items'] as List<dynamic>)
+              .map((scheduleItem) => ScheduleItemModel.fromMap(scheduleItem))
+              .toList();
 
-      return Right(schedules[0]);
+      return Right(scheduleItems);
     } catch (e) {
       return Left("There is an error: $e");
     }

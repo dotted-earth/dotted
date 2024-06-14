@@ -8,11 +8,9 @@ import 'package:dotted/providers/user_provider.dart';
 import 'package:dotted/repositories/preferences_repository.dart';
 import 'package:dotted/repositories/user_repository.dart';
 import 'package:dotted/screens/home_page.dart';
-import 'package:dotted/utils/constants/supabase.dart';
 import 'package:dotted/utils/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class App extends StatefulWidget {
   const App({super.key, required this.initialRoute});
@@ -23,20 +21,6 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  @override
-  void initState() {
-    super.initState();
-
-    supabase.auth.onAuthStateChange.listen((data) {
-      final event = data.event;
-      if (event == AuthChangeEvent.initialSession && data.session != null) {
-        context
-            .read<AuthBloc>()
-            .add(AuthLoginFromSession(user: data.session!.user));
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

@@ -4,24 +4,35 @@ class ScheduleState extends Equatable {
   const ScheduleState({
     required this.itinerary,
     this.error,
-    this.schedule,
+    this.accommodation,
+    this.scheduleItems,
+    this.selectedDay,
   });
 
   final ItineraryModel itinerary;
   final String? error;
-  final Schedule? schedule;
+  final ScheduleItemModel? accommodation;
+  final Map<String, List<ScheduleItemModel>>? scheduleItems;
+  final String? selectedDay;
 
-  ScheduleState copyWith(
-      ItineraryModel? itinerary, String? error, Schedule? schedule) {
+  ScheduleState copyWith({
+    ItineraryModel? itinerary,
+    String? error,
+    ScheduleItemModel? accommodation,
+    Map<String, List<ScheduleItemModel>>? scheduleItems,
+    String? selectedDay,
+  }) {
     return ScheduleState(
-      itinerary: itinerary ?? this.itinerary,
-      error: error ?? this.error,
-      schedule: schedule ?? this.schedule,
-    );
+        itinerary: itinerary ?? this.itinerary,
+        error: error ?? this.error,
+        accommodation: accommodation ?? this.accommodation,
+        scheduleItems: scheduleItems ?? this.scheduleItems,
+        selectedDay: selectedDay ?? this.selectedDay);
   }
 
   @override
-  List<Object?> get props => [itinerary, error, schedule];
+  List<Object?> get props =>
+      [itinerary, error, scheduleItems, accommodation, selectedDay];
 }
 
 class ScheduleInitial extends ScheduleState {
@@ -39,8 +50,8 @@ class ScheduleFailure extends ScheduleState {
 }
 
 class ScheduleSuccess extends ScheduleState {
-  final Schedule schedule;
+  final Map<String, List<ScheduleItemModel>> scheduleItems;
 
-  const ScheduleSuccess({required this.schedule, required super.itinerary})
+  const ScheduleSuccess({required this.scheduleItems, required super.itinerary})
       : super();
 }
