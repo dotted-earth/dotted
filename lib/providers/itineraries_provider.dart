@@ -53,6 +53,14 @@ class ItinerariesProvider {
         .select(
             "*,schedule_items(*, point_of_interest:point_of_interests(*, location:locations(*), address:addresses(*)))")
         .eq('id', itineraryId)
+        .order('end_time',
+            ascending: true,
+            nullsFirst: true,
+            referencedTable: 'schedule_items')
+        .order("start_time",
+            ascending: true,
+            nullsFirst: true,
+            referencedTable: 'schedule_items')
         .maybeSingle();
   }
 

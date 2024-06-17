@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:collection/collection.dart';
 import 'package:dotted/bloc/schedule/schedule_bloc.dart';
 import 'package:dotted/models/itinerary_model.dart';
-import 'package:dotted/models/schedule_item_model.dart';
-import 'package:dotted/models/schedule_item_type_enum.dart';
 import 'package:dotted/providers/itineraries_provider.dart';
 import 'package:dotted/providers/unsplash_provider.dart';
 import 'package:dotted/repositories/itineraries_repository.dart';
@@ -12,7 +8,6 @@ import 'package:dotted/repositories/unsplash_repository.dart';
 import 'package:dotted/widgets/google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import 'package:intl/intl.dart';
@@ -46,6 +41,13 @@ class ScheduleTimelines extends StatefulWidget {
 }
 
 class _ScheduleTimelinesState extends State<ScheduleTimelines> {
+  final List<Color> _colors = [
+    Colors.blue.shade200,
+    Colors.green.shade200,
+    Colors.purple.shade200,
+    Colors.red.shade200
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -75,6 +77,7 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
 
             if (state.scheduleItems != null) {
               // create a map the date as keys and create a list of schedule items by date
+              final accommodation = state.accommodation!;
 
               return DefaultTabController(
                 initialIndex: 0,
@@ -88,10 +91,20 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
                       }).map((date) {
                         final parsedDate = DateTime.parse(date);
                         return Tab(
+                          height: 80,
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(DateFormat.E().format(parsedDate)),
-                              Text(DateFormat.Md().format(parsedDate)),
+                              Text(
+                                DateFormat.E().format(parsedDate),
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              Text(
+                                DateFormat.Md().format(parsedDate),
+                                style: const TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.w800),
+                              ),
                             ],
                           ),
                         );
@@ -115,56 +128,214 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
                           final scheduleItems = state.scheduleItems![key];
                           return ListView(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
-                            children: scheduleItems!.mapIndexed((index, item) {
-                              return TimelineTile(
-                                indicatorStyle: IndicatorStyle(
-                                  color: Colors.black87,
-                                ),
-                                endChild: SizedBox(
-                                  child: Card(
-                                    margin: const EdgeInsets.only(
-                                        top: 16, bottom: 16, left: 16),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                item.scheduleItemType ==
-                                                        ScheduleItemTypeEnum
-                                                            .transportation
-                                                    ? FontAwesome.car_on_solid
-                                                    : item.scheduleItemType ==
-                                                            ScheduleItemTypeEnum
-                                                                .activity
-                                                        ? FontAwesome
-                                                            .person_walking_solid
-                                                        : FontAwesome
-                                                            .utensils_solid,
-                                              ),
-                                              const SizedBox(width: 16),
-                                              Flexible(
-                                                  child: Text(item
-                                                      .pointOfInterest!.name)),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Text(
-                                              "${DateFormat.Hm().format(item.startTime!)} - ${DateFormat.Hm().format(item.endTime!)}"),
-                                          Text(item
-                                              .pointOfInterest!.description),
-                                        ],
+                            children: [
+                              TimelineTile(
+                                  isFirst: true,
+                                  endChild: SizedBox(
+                                    child: Card(
+                                      margin: const EdgeInsets.only(
+                                          top: 16, bottom: 16, left: 16),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              accommodation
+                                                  .pointOfInterest!.name,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge!
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              "Starting from ${accommodation.pointOfInterest!.name}",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            }).toList(),
+                                  indicatorStyle: IndicatorStyle(
+                                    height: 50,
+                                    width: 50,
+                                    drawGap: true,
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    indicator: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(25),
+                                          color: Colors.amber),
+                                      child: const Center(
+                                        child: Icon(
+                                          FontAwesome.flag_checkered_solid,
+                                        ),
+                                      ),
+                                    ),
+                                  )),
+                              ...scheduleItems!.mapIndexed((index, item) {
+                                final color =
+                                    _colors[(index + 1) % _colors.length];
+                                return TimelineTile(
+                                  indicatorStyle: IndicatorStyle(
+                                    height: 50,
+                                    width: 50,
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    indicator: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(25),
+                                          color: color),
+                                      child: Center(
+                                          child: Text(
+                                        (index + 1).toString(),
+                                        style: const TextStyle(fontSize: 24),
+                                      )),
+                                    ),
+                                  ),
+                                  endChild: SizedBox(
+                                    child: Card(
+                                      margin: const EdgeInsets.only(
+                                          top: 16, bottom: 16, left: 16),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.pointOfInterest!.name,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge!
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Badge(
+                                                  largeSize: 32,
+                                                  backgroundColor: Colors.blue,
+                                                  textColor:
+                                                      Colors.blue.shade50,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 12),
+                                                  label: Text(
+                                                    DateFormat("H:mm a").format(
+                                                        item.startTime!),
+                                                    style: const TextStyle(
+                                                        fontSize: 16),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                const Text("-",
+                                                    style: TextStyle(
+                                                        fontSize: 24)),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Badge(
+                                                  largeSize: 32,
+                                                  backgroundColor: Colors.blue,
+                                                  textColor:
+                                                      Colors.blue.shade50,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 12),
+                                                  label: Text(
+                                                    DateFormat("H:mm a")
+                                                        .format(item.endTime!),
+                                                    style: const TextStyle(
+                                                        fontSize: 16),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              item.pointOfInterest!.description,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                              TimelineTile(
+                                  isLast: true,
+                                  endChild: SizedBox(
+                                    child: Card(
+                                      margin: const EdgeInsets.only(
+                                          top: 16, bottom: 16, left: 16),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              accommodation
+                                                  .pointOfInterest!.name,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge!
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              "Finish at ${accommodation.pointOfInterest!.name}",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  indicatorStyle: IndicatorStyle(
+                                    height: 50,
+                                    width: 50,
+                                    indicator: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(25),
+                                            color: Colors.amber),
+                                        child: const Center(
+                                          child: Icon(
+                                            FontAwesome.lines_leaning_solid,
+                                          ),
+                                        )),
+                                  )),
+                            ],
                           );
                         }).toList(),
                       ),

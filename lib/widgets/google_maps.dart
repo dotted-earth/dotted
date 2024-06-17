@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dotted/bloc/schedule/schedule_bloc.dart';
 import 'package:dotted/utils/constants/env.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:location/location.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
@@ -43,14 +43,22 @@ class GoogleMapsState extends State<GoogleMaps> {
     super.initState();
     _addMarkers();
     _fetchPoints();
-    context.read<ScheduleBloc>().on((event, emit) {
+    context.read<ScheduleBloc>().on((event, emit) async {
       if (event is DayScheduleChangeEvent) {
+        final accommodation = context.read<ScheduleBloc>().state.accommodation!;
+        final accommodationMarkerId =
+            MarkerId(accommodation.pointOfInterest!.name);
+
+        _markers.removeWhere((key, value) {
+          return key != accommodationMarkerId;
+        });
+        if (!mounted) return;
         setState(() {
-          _markers = {};
+          _markers = _markers;
           _polylines = {};
         });
-        _addMarkers();
-        _fetchPoints();
+        await _addMarkers();
+        await _fetchPoints();
       }
     });
 
@@ -170,6 +178,21 @@ class GoogleMapsState extends State<GoogleMaps> {
     );
   }
 
+  Future<PolylineResult> getRoutes(
+      PolylinePoints polylinePoints,
+      PointLatLng source,
+      PointLatLng dest,
+      List<PolylineWayPoint> waypoints) async {
+    return await polylinePoints.getRouteBetweenCoordinates(
+      Env.googleMapsKey,
+      source,
+      dest,
+      avoidTolls: true,
+      avoidFerries: true,
+      wayPoints: waypoints,
+    );
+  }
+
   Future<void> _fetchPoints() async {
     final state = context.read<ScheduleBloc>().state;
     final selectedDay = state.selectedDay!;
@@ -190,23 +213,32 @@ class GoogleMapsState extends State<GoogleMaps> {
               "${item.pointOfInterest!.location!.lat},${item.pointOfInterest!.location!.lon}");
     }).toList();
 
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      Env.googleMapsKey,
-      accommodationPoint,
-      finalDestination,
-      travelMode: TravelMode.driving,
-      avoidTolls: true,
-      avoidFerries: true,
-      optimizeWaypoints: true,
-      wayPoints: waypoints,
-    );
+    try {
+      PolylineResult result = await getRoutes(
+        polylinePoints,
+        accommodationPoint,
+        finalDestination,
+        waypoints,
+      );
 
-    if (result.points.isNotEmpty) {
-      final points = result.points.map((PointLatLng point) {
-        return LatLng(point.latitude, point.longitude);
-      }).toList();
+      if (result.points.isNotEmpty) {
+        final points = result.points.map((PointLatLng point) {
+          return LatLng(point.latitude, point.longitude);
+        }).toList();
 
-      _generatePolylineFromPoints(points);
+        _generatePolylineFromPoints(points);
+      }
+    } catch (err) {
+      PolylineResult result = await getRoutes(
+          polylinePoints, accommodationPoint, finalDestination, []);
+
+      if (result.points.isNotEmpty) {
+        final points = result.points.map((PointLatLng point) {
+          return LatLng(point.latitude, point.longitude);
+        }).toList();
+
+        _generatePolylineFromPoints(points);
+      }
     }
   }
 
@@ -246,6 +278,8 @@ class GoogleMapsState extends State<GoogleMaps> {
           markers: Set<Marker>.of(_markers.values),
           myLocationButtonEnabled: false,
           myLocationEnabled: true,
+          buildingsEnabled: false,
+          liteModeEnabled: Platform.isAndroid,
         );
       },
     );

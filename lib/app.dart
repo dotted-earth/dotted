@@ -26,8 +26,9 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     supabase.auth.onAuthStateChange.listen((authState) {
-      if (authState.event.name == 'initialSession' &&
-          authState.session?.user != null) {
+      if (authState.session?.user == null) return;
+      if (authState.event.name == 'initialSession' ||
+          authState.event.name == 'tokenRefreshed') {
         context
             .read<AuthBloc>()
             .add(AuthLoginFromSession(user: authState.session!.user));
