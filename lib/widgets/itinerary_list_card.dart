@@ -1,6 +1,7 @@
 import 'package:dotted/models/itinerary_model.dart';
 import 'package:dotted/models/itinerary_status_enum.dart';
 import 'package:dotted/screens/schedule_page.dart';
+import 'package:dotted/utils/constants/supabase.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -98,7 +99,14 @@ class ItineraryListCard extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    await supabase.from('itineraries').update({
+                                      'itinerary_status':
+                                          ItineraryStatusEnum.ai_pending.name,
+                                    }).match({
+                                      'id': itinerary.id!,
+                                    });
+                                  },
                                   icon: const Icon(Icons.auto_fix_high),
                                   tooltip: "Retry",
                                 ),
