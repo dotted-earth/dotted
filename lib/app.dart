@@ -8,6 +8,7 @@ import 'package:dotted/providers/user_provider.dart';
 import 'package:dotted/repositories/preferences_repository.dart';
 import 'package:dotted/repositories/user_repository.dart';
 import 'package:dotted/screens/home_page.dart';
+import 'package:dotted/utils/constants/supabase.dart';
 import 'package:dotted/utils/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +22,19 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  @override
+  void initState() {
+    super.initState();
+    supabase.auth.onAuthStateChange.listen((authState) {
+      if (authState.event.name == 'initialSession' &&
+          authState.session?.user != null) {
+        context
+            .read<AuthBloc>()
+            .add(AuthLoginFromSession(user: authState.session!.user));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

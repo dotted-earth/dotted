@@ -71,6 +71,7 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
         username: userProfile.username,
         fullName: userProfile.fullName,
         isEmailVerified: userProfile.isEmailVerified,
+        avatarUrl: userProfile.avatarUrl,
         hasOnBoarded: true,
       );
 

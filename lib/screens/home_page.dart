@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
-                if (state.user == null) return Text("no here");
+                if (state.user == null) return const SizedBox.shrink();
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,

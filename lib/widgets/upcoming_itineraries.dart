@@ -1,11 +1,13 @@
 import 'package:dotted/providers/unsplash_provider.dart';
 import 'package:dotted/repositories/unsplash_repository.dart';
 import 'package:dotted/bloc/upcoming_itineraries/upcoming_itineraries_bloc.dart';
+import 'package:dotted/utils/constants/supabase.dart';
 import 'package:dotted/widgets/upcoming_itineraries_list.dart';
 import 'package:dotted/providers/itineraries_provider.dart';
 import 'package:dotted/repositories/itineraries_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UpcomingItineraries extends StatefulWidget {
   const UpcomingItineraries({super.key});
@@ -57,6 +59,18 @@ class _UpcomingItinerariesConsumerState
   void initState() {
     super.initState();
     context.read<UpcomingItinerariesBloc>().add(UpcomingItinerariesRequested());
+    supabase
+        .channel('itinerary_status_update')
+        .onPostgresChanges(
+            event: PostgresChangeEvent.update,
+            schema: 'public',
+            table: 'itineraries',
+            callback: (payload) {
+              context
+                  .read<UpcomingItinerariesBloc>()
+                  .add(UpcomingItinerariesRequested());
+            })
+        .subscribe();
   }
 
   @override

@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:location/location.dart';
+import 'package:widget_to_marker/widget_to_marker.dart';
 
 class GoogleMaps extends StatefulWidget {
   const GoogleMaps({super.key});
@@ -17,6 +19,12 @@ class GoogleMaps extends StatefulWidget {
 }
 
 class GoogleMapsState extends State<GoogleMaps> {
+  final List<Color> _colors = [
+    Colors.blue.shade200,
+    Colors.green.shade200,
+    Colors.purple.shade200,
+    Colors.red.shade200
+  ];
   LatLng? _currentPosition;
   Map<PolylineId, Polyline> _polylines = {};
   Map<MarkerId, Marker> _markers = {};
@@ -38,6 +46,7 @@ class GoogleMapsState extends State<GoogleMaps> {
     context.read<ScheduleBloc>().on((event, emit) {
       if (event is DayScheduleChangeEvent) {
         setState(() {
+          _markers = {};
           _polylines = {};
         });
         _addMarkers();
@@ -45,18 +54,10 @@ class GoogleMapsState extends State<GoogleMaps> {
       }
     });
 
-    /// destination marker
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final location = await DevicesUtils.getLocation();
       if (location.latitude == null || location.longitude == null) return;
-
-      setState(() {
-        _currentPosition = LatLng(location.latitude!, location.longitude!);
-      });
       await _fetchLocationUpdates();
-      // final polylines = await fetchPolylinePoints();
-      // await generatePolylineFromPoints(polylines);
     });
   }
 
@@ -76,22 +77,56 @@ class GoogleMapsState extends State<GoogleMaps> {
     final scheduleItems = state.scheduleItems![state.selectedDay]!;
     Map<MarkerId, Marker> markers = {};
 
+    final icon = await Container(
+      height: 100,
+      width: 100,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: const Icon(
+        Icons.hotel,
+        size: 50,
+        color: Colors.white,
+      ),
+    ).toBitmapDescriptor(
+        logicalSize: const Size(100, 100), imageSize: const Size(100, 100));
     final MarkerId accommodationMarkerId =
         MarkerId(accommodation.pointOfInterest!.name);
     final Marker accommodationMarker = Marker(
-        markerId: accommodationMarkerId,
-        position: LatLng(accommodation.pointOfInterest!.location!.lat,
-            accommodation.pointOfInterest!.location!.lon));
+      markerId: accommodationMarkerId,
+      position: LatLng(
+        accommodation.pointOfInterest!.location!.lat,
+        accommodation.pointOfInterest!.location!.lon,
+      ),
+      icon: icon,
+    );
     markers[accommodationMarkerId] = accommodationMarker;
 
+    var i = 0;
     for (final item in scheduleItems) {
+      final icon = await Container(
+        height: 100,
+        width: 100,
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+            color: _colors[(i + 1) % _colors.length],
+            borderRadius: BorderRadius.circular(50)),
+        child: Center(
+            child:
+                Text((i + 1).toString(), style: const TextStyle(fontSize: 32))),
+      ).toBitmapDescriptor(
+          logicalSize: const Size(100, 100), imageSize: const Size(100, 100));
       final poi = item.pointOfInterest!;
       final MarkerId markerId = MarkerId(poi.name);
       final Marker marker = Marker(
-          markerId: markerId,
-          position: LatLng(poi.location!.lat, poi.location!.lon),
-          icon: BitmapDescriptor.defaultMarker);
+        markerId: markerId,
+        position: LatLng(poi.location!.lat, poi.location!.lon),
+        icon: icon,
+      );
       markers[markerId] = marker;
+      i++;
     }
 
     setState(() {
@@ -112,7 +147,7 @@ class GoogleMapsState extends State<GoogleMaps> {
             accommodation.pointOfInterest!.location!.lat,
             accommodation.pointOfInterest!.location!.lon,
           ),
-          zoom: 14.5,
+          zoom: 15,
         ),
       ),
     );

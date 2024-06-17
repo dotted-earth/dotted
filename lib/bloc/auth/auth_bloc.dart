@@ -16,7 +16,7 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(AuthInitial(isLoading: false)) {
+  AuthBloc() : super(const AuthInitial(isLoading: false)) {
     on<AuthLoginWithGoogleRequested>(_onAuthWithGoogleRequest);
     on<AuthLoginWithAppleRequested>(_onAuthWithAppleRequest);
     on<AuthLogOutRequested>(_onAuthSignOutRequest);

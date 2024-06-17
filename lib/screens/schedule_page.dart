@@ -98,6 +98,9 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
                       }).toList(),
                       onTap: (index) {
                         final keys = state.scheduleItems!.keys.toList();
+                        final selectedKey = keys[index];
+                        if (selectedKey == state.selectedDay) return;
+
                         context.read<ScheduleBloc>().add(
                             DayScheduleChangeEvent(selectedDay: keys[index]));
                       },
@@ -114,6 +117,9 @@ class _ScheduleTimelinesState extends State<ScheduleTimelines> {
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             children: scheduleItems!.mapIndexed((index, item) {
                               return TimelineTile(
+                                indicatorStyle: IndicatorStyle(
+                                  color: Colors.black87,
+                                ),
                                 endChild: SizedBox(
                                   child: Card(
                                     margin: const EdgeInsets.only(
